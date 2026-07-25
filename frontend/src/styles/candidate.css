@@ -1799,3 +1799,371 @@
     gap: 5px;
   }
 }
+
+
+/* ========================================
+   CANDIDATE - PROFILE
+======================================== */
+
+.candidate-profile-grid {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+
+/* PROFILE SIDEBAR */
+
+.candidate-profile-sidebar-card {
+  padding: 25px 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+  position: sticky;
+  top: 96px;
+}
+
+.candidate-profile-avatar-large {
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.candidate-profile-sidebar-card h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 18px;
+}
+
+.candidate-profile-title {
+  margin: 5px 0 20px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.candidate-profile-contact {
+  padding: 17px 0;
+  border-top: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  text-align: left;
+}
+
+.candidate-profile-contact span {
+  color: #6b7280;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.candidate-profile-contact i {
+  width: 20px;
+  margin-right: 6px;
+  color: #2563eb;
+}
+
+.candidate-profile-completion-box {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.candidate-profile-completion-box > div:first-child {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.candidate-profile-completion-box strong {
+  color: #2563eb;
+}
+
+.candidate-profile-completion-box small {
+  display: block;
+  margin-top: 9px;
+  color: #9ca3af;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+/* PROFILE SECTIONS */
+
+.candidate-profile-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.candidate-profile-card {
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.candidate-profile-card-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.candidate-profile-card-header h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 16px;
+}
+
+.candidate-profile-card-header p {
+  margin: 4px 0 0;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.candidate-profile-card-header > i {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FORM */
+
+.candidate-profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.candidate-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.candidate-profile-full-field {
+  grid-column: 1 / -1;
+}
+
+.candidate-profile-field label {
+  color: #374151;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.candidate-profile-field input,
+.candidate-profile-field textarea,
+.candidate-profile-field select {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  outline: none;
+  background: #ffffff;
+  color: #374151;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.candidate-profile-field textarea {
+  resize: vertical;
+}
+
+.candidate-profile-field input:focus,
+.candidate-profile-field textarea:focus,
+.candidate-profile-field select:focus {
+  border-color: #2563eb;
+}
+
+.candidate-profile-field input:disabled,
+.candidate-profile-field textarea:disabled,
+.candidate-profile-field select:disabled {
+  border-color: #e5e7eb;
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: default;
+}
+
+/* SKILLS */
+
+.candidate-profile-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.candidate-profile-skills > span {
+  padding: 7px 10px;
+  border-radius: 17px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.candidate-profile-skills button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.candidate-add-skill {
+  margin-top: 16px;
+  display: flex;
+  gap: 9px;
+}
+
+.candidate-add-skill input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  outline: none;
+  font-size: 12px;
+}
+
+.candidate-add-skill input:focus {
+  border-color: #2563eb;
+}
+
+.candidate-add-skill button {
+  padding: 0 14px;
+  border: none;
+  border-radius: 7px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.candidate-add-skill button i {
+  margin-right: 5px;
+}
+
+/* RESUME */
+
+.candidate-resume-box {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.candidate-resume-info {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.candidate-resume-icon {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.candidate-resume-info strong {
+  display: block;
+  color: #374151;
+  font-size: 12px;
+}
+
+.candidate-resume-info span {
+  display: block;
+  margin-top: 3px;
+  color: #9ca3af;
+  font-size: 10px;
+}
+
+.candidate-resume-upload {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.candidate-resume-upload i {
+  margin-right: 6px;
+}
+
+.candidate-resume-upload input {
+  display: none;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .candidate-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-profile-sidebar-card {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .candidate-profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-profile-full-field {
+    grid-column: auto;
+  }
+
+  .candidate-add-skill {
+    flex-direction: column;
+  }
+
+  .candidate-add-skill button {
+    min-height: 40px;
+  }
+
+  .candidate-resume-box {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .candidate-resume-upload {
+    text-align: center;
+  }
+}
