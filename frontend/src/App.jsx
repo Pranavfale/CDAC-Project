@@ -9,6 +9,7 @@ import CandidateJobDetails from "./pages/candidate/CandidateJobDetails";
 import HRDashboard from "./pages/hr/HRDashboard";
 import MyApplications from "./pages/candidate/MyApplications";
 import CandidateProfile from "./pages/candidate/CandidateProfile";
+import SavedJobs from "./pages/candidate/SavedJobs";
 
 function AdminPlaceholder() {
   return (
@@ -32,10 +33,16 @@ function App() {
 
       <Route path="/candidate" element={<CandidateLayout />}>
         <Route path="dashboard" element={<CandidateDashboard />} />
+
         <Route path="jobs" element={<BrowseJobs />} />
+
         <Route path="jobs/:id" element={<CandidateJobDetails />} />
+
         <Route path="applications" element={<MyApplications />} />
+
         <Route path="profile" element={<CandidateProfile />} />
+
+        <Route path="saved-jobs" element={<SavedJobs />} />
       </Route>
 
       <Route path="/hr" element={<HRLayout />}>

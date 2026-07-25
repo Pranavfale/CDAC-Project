@@ -2167,3 +2167,299 @@
     text-align: center;
   }
 }
+
+/* ========================================
+   CANDIDATE - SAVED JOBS
+======================================== */
+
+.candidate-saved-summary {
+  width: fit-content;
+  min-width: 190px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.candidate-saved-summary-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.candidate-saved-summary strong {
+  display: block;
+  color: #111827;
+  font-size: 21px;
+}
+
+.candidate-saved-summary span {
+  display: block;
+  margin-top: 2px;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+/* SEARCH */
+
+.candidate-saved-search-card {
+  margin-bottom: 18px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.candidate-saved-result-header {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.candidate-saved-result-header strong {
+  color: #111827;
+  font-size: 14px;
+}
+
+.candidate-saved-result-header span {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* GRID */
+
+.candidate-saved-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.candidate-saved-job-card {
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: 0.2s ease;
+}
+
+.candidate-saved-job-card:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+.candidate-saved-job-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.candidate-saved-job-top h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 16px;
+}
+
+.candidate-saved-job-top p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* REMOVE BOOKMARK */
+
+.candidate-remove-saved {
+  width: 35px;
+  height: 35px;
+  min-width: 35px;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  background: #fef2f2;
+  color: #dc2626;
+  cursor: pointer;
+}
+
+.candidate-remove-saved:hover {
+  background: #fee2e2;
+}
+
+/* META */
+
+.candidate-saved-job-meta {
+  margin: 18px 0 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+.candidate-saved-job-meta span {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.candidate-saved-job-meta i {
+  margin-right: 5px;
+  color: #9ca3af;
+}
+
+/* SALARY */
+
+.candidate-saved-salary {
+  margin-bottom: 14px;
+  color: #059669;
+  font-size: 12px;
+}
+
+.candidate-saved-salary i {
+  margin-right: 4px;
+}
+
+.candidate-saved-salary strong {
+  font-weight: 600;
+}
+
+/* FOOTER */
+
+.candidate-saved-job-footer {
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.candidate-saved-job-footer > span {
+  color: #9ca3af;
+  font-size: 10px;
+}
+
+.candidate-saved-job-footer > span i {
+  margin-right: 5px;
+}
+
+.candidate-saved-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.candidate-unsave-button {
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #6b7280;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.candidate-unsave-button i {
+  margin-right: 4px;
+}
+
+.candidate-unsave-button:hover {
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.candidate-saved-view-button {
+  padding: 8px 11px;
+  border-radius: 7px;
+  background: #2563eb;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* EMPTY STATE */
+
+.candidate-saved-empty {
+  padding: 65px 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.candidate-saved-empty-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.candidate-saved-empty h3 {
+  margin: 15px 0 5px;
+  color: #111827;
+  font-size: 17px;
+}
+
+.candidate-saved-empty p {
+  margin: 0 auto 18px;
+  max-width: 400px;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.candidate-saved-empty a,
+.candidate-saved-empty button {
+  display: inline-block;
+  padding: 9px 15px;
+  border: none;
+  border-radius: 7px;
+  background: #2563eb;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .candidate-saved-jobs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .candidate-saved-summary {
+    width: 100%;
+  }
+
+  .candidate-saved-job-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .candidate-saved-actions {
+    width: 100%;
+  }
+
+  .candidate-unsave-button,
+  .candidate-saved-view-button {
+    flex: 1;
+    text-align: center;
+  }
+}
