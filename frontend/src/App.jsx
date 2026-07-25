@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/admin/AdminLayout.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 function AdminPlaceholder() {
   return (
@@ -17,7 +18,7 @@ function App() {
 
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminPlaceholder />} />
-
+        <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="*" element={<AdminPlaceholder />} />
       </Route>
     </Routes>
