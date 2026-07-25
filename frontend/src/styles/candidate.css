@@ -1074,3 +1074,410 @@
     justify-content: center;
   }
 }
+
+/* ========================================
+   CANDIDATE - JOB DETAILS
+======================================== */
+
+.candidate-job-back {
+  margin-bottom: 18px;
+}
+
+.candidate-job-back a {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.candidate-job-back i {
+  margin-right: 6px;
+}
+
+.candidate-job-detail-header {
+  margin-bottom: 22px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.candidate-job-detail-company {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.candidate-job-detail-logo {
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.candidate-job-detail-company h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 22px;
+}
+
+.candidate-job-detail-company p {
+  margin: 5px 0 9px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.candidate-job-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.candidate-job-detail-meta span {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.candidate-job-detail-meta i {
+  margin-right: 5px;
+}
+
+.candidate-job-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.candidate-detail-save,
+.candidate-apply-button {
+  min-height: 40px;
+  padding: 0 15px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.candidate-detail-save {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+}
+
+.candidate-detail-save i {
+  margin-right: 6px;
+}
+
+.candidate-detail-saved {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.candidate-apply-button {
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.candidate-apply-button:hover {
+  background: #1d4ed8;
+}
+
+.candidate-applied-badge {
+  padding: 10px 14px;
+  border-radius: 7px;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.candidate-applied-badge i {
+  margin-right: 6px;
+}
+
+/* DETAIL GRID */
+
+.candidate-job-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(270px, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.candidate-job-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.candidate-job-detail-card,
+.candidate-job-info-card {
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.candidate-job-detail-card h3,
+.candidate-job-info-card h3 {
+  margin: 0 0 16px;
+  color: #111827;
+  font-size: 16px;
+}
+
+.candidate-job-detail-card p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.candidate-job-detail-card ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.candidate-job-detail-card li {
+  margin-bottom: 9px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.candidate-detail-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.candidate-detail-skills span {
+  padding: 6px 10px;
+  border-radius: 15px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* JOB OVERVIEW */
+
+.candidate-job-info-card {
+  position: sticky;
+  top: 96px;
+}
+
+.candidate-job-info-item {
+  padding: 13px 0;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.candidate-job-info-item:last-child {
+  border-bottom: none;
+}
+
+.candidate-job-info-item > i {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 7px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.candidate-job-info-item span {
+  display: block;
+  color: #9ca3af;
+  font-size: 10px;
+}
+
+.candidate-job-info-item strong {
+  display: block;
+  margin-top: 3px;
+  color: #374151;
+  font-size: 12px;
+}
+
+/* APPLICATION MODAL */
+
+.candidate-application-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  padding: 20px;
+  background: rgba(17, 24, 39, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.candidate-application-modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.candidate-application-header {
+  padding: 20px 22px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.candidate-application-header h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 17px;
+}
+
+.candidate-application-header p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.candidate-application-header button {
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 27px;
+  cursor: pointer;
+}
+
+.candidate-application-form {
+  padding: 22px;
+}
+
+.candidate-form-group {
+  margin-bottom: 20px;
+}
+
+.candidate-form-group label {
+  display: block;
+  margin-bottom: 7px;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.candidate-form-group input,
+.candidate-form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.candidate-form-group textarea {
+  resize: vertical;
+}
+
+.candidate-form-group input:focus,
+.candidate-form-group textarea:focus {
+  border-color: #2563eb;
+}
+
+.candidate-form-group small {
+  display: block;
+  margin-top: 6px;
+  color: #059669;
+  font-size: 10px;
+}
+
+.candidate-application-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.candidate-cancel-button,
+.candidate-submit-application {
+  padding: 10px 15px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.candidate-cancel-button {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+}
+
+.candidate-submit-application {
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .candidate-job-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-job-info-card {
+    position: static;
+  }
+}
+
+@media (max-width: 650px) {
+  .candidate-job-detail-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .candidate-job-detail-actions {
+    width: 100%;
+  }
+
+  .candidate-detail-save,
+  .candidate-apply-button {
+    flex: 1;
+  }
+
+  .candidate-job-detail-company {
+    align-items: flex-start;
+  }
+
+  .candidate-job-detail-meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .candidate-application-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .candidate-cancel-button,
+  .candidate-submit-application {
+    width: 100%;
+  }
+}
