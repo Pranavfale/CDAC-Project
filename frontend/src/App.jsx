@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/admin/AdminLayout.jsx";
 import CandidateLayout from "./components/candidate/CandidateLayout";
+import CandidateDashboard from "./pages/candidate/CandidateDashboard";
 import HRLayout from "./components/hr/HRLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 
@@ -25,8 +26,9 @@ function App() {
       </Route>
 
       <Route path="/candidate" element={<CandidateLayout />}>
-        {/* Candidate feature routes will go here */}
+        <Route path="dashboard" element={<CandidateDashboard />} />
       </Route>
+
       <Route path="/hr" element={<HRLayout />}>
         {/* HR child routes will be added feature by feature */}
       </Route>
