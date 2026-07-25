@@ -4,6 +4,7 @@ import CandidateLayout from "./components/candidate/CandidateLayout";
 import CandidateDashboard from "./pages/candidate/CandidateDashboard";
 import HRLayout from "./components/hr/HRLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import BrowseJobs from "./pages/candidate/BrowseJobs";
 
 function AdminPlaceholder() {
   return (
@@ -27,6 +28,7 @@ function App() {
 
       <Route path="/candidate" element={<CandidateLayout />}>
         <Route path="dashboard" element={<CandidateDashboard />} />
+        <Route path="jobs" element={<BrowseJobs />} />
       </Route>
 
       <Route path="/hr" element={<HRLayout />}>
