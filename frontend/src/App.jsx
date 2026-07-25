@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/admin/AdminLayout.jsx";
+import CandidateLayout from "./components/candidate/CandidateLayout";
 
 function AdminPlaceholder() {
   return (
@@ -19,6 +20,10 @@ function App() {
         <Route index element={<AdminPlaceholder />} />
 
         <Route path="*" element={<AdminPlaceholder />} />
+      </Route>
+
+      <Route path="/candidate" element={<CandidateLayout />}>
+        {/* Candidate feature routes will go here */}
       </Route>
     </Routes>
   );
