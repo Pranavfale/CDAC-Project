@@ -6,6 +6,7 @@ import HRLayout from "./components/hr/HRLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import BrowseJobs from "./pages/candidate/BrowseJobs";
 import CandidateJobDetails from "./pages/candidate/CandidateJobDetails";
+import HRDashboard from "./pages/hr/HRDashboard";
 
 function AdminPlaceholder() {
   return (
@@ -34,7 +35,9 @@ function App() {
       </Route>
 
       <Route path="/hr" element={<HRLayout />}>
-        {/* HR child routes will be added feature by feature */}
+        <Route index element={<Navigate to="dashboard" replace />} />
+
+        <Route path="dashboard" element={<HRDashboard />} />
       </Route>
     </Routes>
   );
