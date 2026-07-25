@@ -1481,3 +1481,321 @@
     width: 100%;
   }
 }
+
+/* ========================================
+   CANDIDATE - MY APPLICATIONS
+======================================== */
+
+.candidate-application-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.candidate-application-summary article {
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.candidate-app-summary-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.candidate-application-summary strong {
+  display: block;
+  color: #111827;
+  font-size: 21px;
+}
+
+.candidate-application-summary span {
+  display: block;
+  margin-top: 2px;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+/* FILTER */
+
+.candidate-application-filter-card {
+  margin-bottom: 18px;
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.candidate-application-filter-card h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 16px;
+}
+
+.candidate-application-filter-card p {
+  margin: 4px 0 0;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.candidate-application-filter {
+  height: 40px;
+  padding: 0 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.candidate-application-filter i {
+  color: #6b7280;
+}
+
+.candidate-application-filter select {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #374151;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* APPLICATION LIST */
+
+.candidate-applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.candidate-application-card {
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transition: 0.2s ease;
+}
+
+.candidate-application-card:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.candidate-application-company {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.candidate-application-logo {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.candidate-application-company h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 15px;
+}
+
+.candidate-application-company p {
+  margin: 4px 0 9px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.candidate-application-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+.candidate-application-meta span {
+  color: #9ca3af;
+  font-size: 10px;
+}
+
+.candidate-application-meta i {
+  margin-right: 4px;
+}
+
+.candidate-application-card-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* STATUS */
+
+.candidate-app-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.candidate-app-status-applied {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.candidate-app-status-review {
+  background: #fefce8;
+  color: #ca8a04;
+}
+
+.candidate-app-status-shortlisted {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.candidate-app-status-interview {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.candidate-app-status-selected {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.candidate-app-status-rejected {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.candidate-application-view {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  color: #374151;
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.candidate-application-view:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+/* EMPTY */
+
+.candidate-no-applications {
+  padding: 60px 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.candidate-no-applications > i {
+  color: #d1d5db;
+  font-size: 42px;
+}
+
+.candidate-no-applications h3 {
+  margin: 14px 0 5px;
+  color: #111827;
+  font-size: 17px;
+}
+
+.candidate-no-applications p {
+  margin: 0 0 17px;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.candidate-no-applications button {
+  padding: 9px 14px;
+  border: none;
+  border-radius: 7px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .candidate-application-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .candidate-application-filter-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .candidate-application-filter {
+    width: 100%;
+  }
+
+  .candidate-application-filter select {
+    flex: 1;
+  }
+
+  .candidate-application-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .candidate-application-card-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 520px) {
+  .candidate-application-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-application-company {
+    align-items: flex-start;
+  }
+
+  .candidate-application-meta {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
