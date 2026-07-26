@@ -634,3 +634,232 @@
   }
 }
 
+/* ========================================
+   USER MANAGEMENT
+======================================== */
+
+.admin-user-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #4b5563;
+  font-size: 13px;
+}
+
+.admin-user-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.admin-summary-card {
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.admin-summary-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.admin-summary-card strong {
+  color: #111827;
+  font-size: 26px;
+}
+
+.admin-management-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.admin-management-toolbar {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-search-box {
+  width: 100%;
+  max-width: 420px;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-search-box i {
+  color: #9ca3af;
+}
+
+.admin-search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #111827;
+  font-size: 13px;
+}
+
+.admin-search-box input::placeholder {
+  color: #9ca3af;
+}
+
+.admin-filter-box {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-filter-box i {
+  color: #6b7280;
+}
+
+.admin-filter-box select {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* ROLE BADGES */
+
+.admin-role-badge {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.admin-role-candidate {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.admin-role-hr {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+/* ACTION BUTTONS */
+
+.admin-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.admin-action-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.admin-view-button {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.admin-view-button:hover {
+  background: #dbeafe;
+}
+
+.admin-status-button {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.admin-status-button:hover {
+  background: #fef3c7;
+}
+
+.admin-delete-button {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.admin-delete-button:hover {
+  background: #fee2e2;
+}
+
+/* EMPTY SEARCH RESULT */
+
+.admin-empty-state {
+  padding: 50px !important;
+  text-align: center !important;
+  color: #9ca3af !important;
+}
+
+.admin-empty-state i {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.admin-empty-state p {
+  margin: 0;
+}
+
+/* USER MANAGEMENT RESPONSIVE */
+
+@media (max-width: 1000px) {
+  .admin-user-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .admin-management-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-search-box {
+    max-width: none;
+  }
+
+  .admin-filter-box {
+    width: 100%;
+  }
+
+  .admin-filter-box select {
+    flex: 1;
+  }
+
+  .admin-user-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-count {
+    width: 100%;
+  }
+}
+
