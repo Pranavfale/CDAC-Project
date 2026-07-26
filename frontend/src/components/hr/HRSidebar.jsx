@@ -8,7 +8,7 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
       icon: "bi-speedometer2",
     },
     {
-      name: "Vacancies",
+      name: "Job Management",
       path: "/hr/vacancies",
       icon: "bi-briefcase",
     },
@@ -40,7 +40,15 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
         <div
           className="hr-sidebar-overlay"
           onClick={closeSidebar}
-        ></div>
+          role="button"
+          tabIndex={0}
+          aria-label="Close HR sidebar"
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === "Escape") {
+              closeSidebar();
+            }
+          }}
+        />
       )}
 
       <aside
@@ -64,18 +72,23 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
             onClick={closeSidebar}
             aria-label="Close HR menu"
           >
-            ×
+            <i className="bi bi-x-lg"></i>
           </button>
         </div>
 
-        <nav className="hr-sidebar-nav">
+        <nav
+          className="hr-sidebar-nav"
+          aria-label="HR navigation"
+        >
           {menuItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={closeSidebar}
               className={({ isActive }) =>
-                `hr-nav-link ${isActive ? "active" : ""}`
+                `hr-nav-link ${
+                  isActive ? "active" : ""
+                }`
               }
             >
               <i className={`bi ${item.icon}`}></i>
@@ -86,13 +99,27 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
 
         <div className="hr-sidebar-footer">
           <div className="hr-profile-mini">
-            <div className="hr-avatar">H</div>
+            <div className="hr-avatar">P</div>
 
-            <div>
+            <div className="hr-profile-info">
               <strong>Priya Patil</strong>
               <span>HR Manager</span>
             </div>
           </div>
+
+          <button
+            type="button"
+            className="hr-logout-button"
+            title="Logout"
+            aria-label="Logout"
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "/login";
+            }}
+          >
+            <i className="bi bi-box-arrow-right"></i>
+          </button>
         </div>
       </aside>
     </>
