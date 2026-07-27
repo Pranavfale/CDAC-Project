@@ -1,0 +1,412 @@
+.auth-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--surface);
+}
+
+
+
+.auth-brand-panel {
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 48px;
+
+    color: white;
+
+    background:
+        radial-gradient(circle at 15% 15%,
+            rgba(255, 255, 255, 0.16),
+            transparent 30%),
+        linear-gradient(145deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+}
+
+.auth-brand-panel::after {
+    content: "";
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    right: -130px;
+    bottom: -130px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.auth-logo {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.auth-logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    background: white;
+    color: var(--primary);
+}
+
+.auth-brand-content {
+    position: relative;
+    z-index: 1;
+
+    max-width: 520px;
+}
+
+.auth-brand-content h1 {
+    margin-bottom: 18px;
+
+    color: white;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+}
+
+.auth-brand-content p {
+    max-width: 470px;
+
+    color: #dbeafe;
+
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.auth-features {
+    display: grid;
+    gap: 14px;
+
+    margin-top: 32px;
+}
+
+.auth-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #eff6ff;
+}
+
+.auth-feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.auth-brand-footer {
+    position: relative;
+    z-index: 1;
+
+    color: #bfdbfe;
+
+    font-size: 0.85rem;
+}
+
+
+
+
+.auth-form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 48px 32px;
+
+    background: #f8fafc;
+}
+
+.auth-form-container {
+    width: 100%;
+    max-width: 460px;
+}
+
+.auth-form-header {
+    margin-bottom: 30px;
+}
+
+.auth-form-header h2 {
+    margin-bottom: 8px;
+
+    font-size: 2rem;
+}
+
+.auth-form-header p {
+    color: var(--text-secondary);
+}
+
+
+
+
+.auth-input-wrapper {
+    position: relative;
+}
+
+.auth-input-icon {
+    position: absolute;
+    top: 50%;
+    left: 13px;
+
+    transform: translateY(-50%);
+
+    color: var(--text-muted);
+
+    pointer-events: none;
+}
+
+.auth-input-wrapper .form-control {
+    padding-left: 42px;
+}
+
+.auth-input-wrapper.has-password-action .form-control {
+    padding-right: 44px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+
+    color: var(--text-muted);
+}
+
+.password-toggle:hover {
+    color: var(--text-primary);
+}
+
+
+
+
+.auth-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--text-secondary);
+
+    font-size: 0.88rem;
+
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    accent-color: var(--primary);
+}
+
+.auth-link {
+    color: var(--primary);
+
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+.auth-submit {
+    width: 100%;
+}
+
+.auth-switch {
+    margin-top: 24px;
+
+    text-align: center;
+
+    color: var(--text-secondary);
+
+    font-size: 0.9rem;
+}
+
+
+
+
+.field-error {
+    margin-top: 5px;
+
+    color: var(--danger);
+
+    font-size: 0.8rem;
+}
+
+.auth-alert {
+    margin-bottom: 20px;
+    padding: 12px 14px;
+
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md);
+
+    background: var(--danger-bg);
+    color: #991b1b;
+
+    font-size: 0.88rem;
+}
+
+
+
+
+.demo-accounts {
+    margin-top: 28px;
+    padding: 16px;
+
+    border: 1px dashed var(--border-dark);
+    border-radius: var(--radius-md);
+
+    background: var(--surface);
+}
+
+.demo-accounts-title {
+    margin-bottom: 10px;
+
+    color: var(--text-secondary);
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.demo-account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 7px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.demo-account:last-child {
+    border-bottom: none;
+}
+
+.demo-role {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.demo-email {
+    color: var(--text-secondary);
+
+    font-size: 0.78rem;
+}
+
+
+
+
+.register-form-container {
+    max-width: 560px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+}
+
+.form-grid-full {
+    grid-column: 1 / -1;
+}
+
+.candidate-role-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    margin-bottom: 20px;
+    padding: 12px 14px;
+
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-md);
+
+    background: var(--primary-light);
+    color: #1e40af;
+
+    font-size: 0.85rem;
+}
+
+
+
+
+@media (max-width: 900px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-brand-panel {
+        display: none;
+    }
+
+    .auth-form-panel {
+        min-height: 100vh;
+    }
+}
+
+@media (max-width: 600px) {
+    .auth-form-panel {
+        padding: 28px 18px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid-full {
+        grid-column: auto;
+    }
+
+    .auth-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
