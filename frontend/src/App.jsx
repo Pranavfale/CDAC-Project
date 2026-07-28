@@ -6,6 +6,7 @@ import HRLayout from "./components/hr/HRLayout";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
+import HRManagement from "./pages/admin/HRManagement";
 
 import CandidateDashboard from "./pages/candidate/CandidateDashboard";
 import BrowseJobs from "./pages/candidate/BrowseJobs";
@@ -19,11 +20,6 @@ import HRJobManagement from "./pages/hr/HRJobManagement";
 function App() {
   return (
     <Routes>
-      {/* Default route */}
-      <Route
-        path="/"
-        element={<Navigate to="/admin/dashboard" replace />}
-      />
 
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminLayout />}>
@@ -40,6 +36,11 @@ function App() {
         <Route
           path="users"
           element={<UserManagement />}
+        />
+
+        <Route
+        path="hr"
+        element={<HRManagement />}
         />
       </Route>
 
