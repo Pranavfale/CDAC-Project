@@ -3,9 +3,12 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/admin/AdminLayout.jsx";
 import CandidateLayout from "./components/candidate/CandidateLayout";
 import HRLayout from "./components/hr/HRLayout";
+import LandingPage from './pages/public/LandingPage.jsx'
+import PublicJobs from "./pages/public/Jobs";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
+import PublicJobDetails from "./pages/public/JobDetails";
 
 import CandidateDashboard from "./pages/candidate/CandidateDashboard";
 import BrowseJobs from "./pages/candidate/BrowseJobs";
@@ -15,15 +18,27 @@ import CandidateProfile from "./pages/candidate/CandidateProfile";
 
 import HRDashboard from "./pages/hr/HRDashboard";
 import HRJobManagement from "./pages/hr/HRJobManagement";
+import Unauthorized from './pages/public/Unauthorized';
+import Register from './pages/auth/Register';
+import Login from './pages/auth/Login';
 
 function App() {
   return (
     <Routes>
-      {/* Default route */}
-      <Route
-        path="/"
-        element={<Navigate to="/admin/dashboard" replace />}
-      />
+
+      {/* ================= PUBLIC ================= */}
+
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/jobs" element={<PublicJobs />} />
+      <Route path="/jobs/:jobId" element={<PublicJobDetails />} />
+
+      <Route path="/login" element={<Login />} />
+
+      <Route path="/register" element={<Register />} />
+
+      <Route path="/unauthorized" element={<Unauthorized />} />
+
+     
 
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminLayout />}>
