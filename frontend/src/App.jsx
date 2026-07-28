@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/admin/AdminLayout";
 import CandidateLayout from "./components/candidate/CandidateLayout";
 import HRLayout from "./components/hr/HRLayout";
+import CandidateManagement from "./pages/admin/CandidateManagement";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -33,7 +34,7 @@ import Unauthorized from './pages/public/Unauthorized';
 function App() {
   return (
     <Routes>
-  {/* ================= PUBLIC ================= */}
+      {/* ================= PUBLIC ================= */}
 
       <Route path="/" element={<LandingPage />} />
       <Route path="/jobs" element={<PublicJobs />} />
@@ -66,6 +67,11 @@ function App() {
         <Route
           path="hr"
           element={<HRManagement />}
+        />
+
+        <Route
+          path="candidates"
+          element={<CandidateManagement />}
         />
       </Route>
 
