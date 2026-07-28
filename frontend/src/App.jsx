@@ -1,27 +1,39 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import AdminLayout from "./components/admin/AdminLayout.jsx";
+// Layouts
+import AdminLayout from "./components/admin/AdminLayout";
 import CandidateLayout from "./components/candidate/CandidateLayout";
 import HRLayout from "./components/hr/HRLayout";
 
+// Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import HRManagement from "./pages/admin/HRManagement";
 
+// Candidate Pages
 import CandidateDashboard from "./pages/candidate/CandidateDashboard";
 import BrowseJobs from "./pages/candidate/BrowseJobs";
 import CandidateJobDetails from "./pages/candidate/CandidateJobDetails";
 import MyApplications from "./pages/candidate/MyApplications";
 import CandidateProfile from "./pages/candidate/CandidateProfile";
 
+// HR Pages
 import HRDashboard from "./pages/hr/HRDashboard";
 import HRJobManagement from "./pages/hr/HRJobManagement";
+import HRApplicantManagement from "./pages/hr/HRApplicantManagement";
 
 function App() {
   return (
     <Routes>
 
-      {/* Admin Routes */}
+      {/* Default Route */}
+      <Route
+        path="/"
+        element={<Navigate to="/admin/dashboard" replace />}
+      />
+
+      {/* ================= ADMIN ================= */}
+
       <Route path="/admin" element={<AdminLayout />}>
         <Route
           index
@@ -39,16 +51,14 @@ function App() {
         />
 
         <Route
-        path="hr"
-        element={<HRManagement />}
+          path="hr"
+          element={<HRManagement />}
         />
       </Route>
 
-      {/* Candidate Routes */}
-      <Route
-        path="/candidate"
-        element={<CandidateLayout />}
-      >
+      {/* ================= CANDIDATE ================= */}
+
+      <Route path="/candidate" element={<CandidateLayout />}>
         <Route
           index
           element={<Navigate to="dashboard" replace />}
@@ -80,7 +90,8 @@ function App() {
         />
       </Route>
 
-      {/* HR Routes */}
+      {/* ================= HR ================= */}
+
       <Route path="/hr" element={<HRLayout />}>
         <Route
           index
@@ -93,16 +104,23 @@ function App() {
         />
 
         <Route
-          path="vacancies"
+          path="jobs"
           element={<HRJobManagement />}
+        />
+
+        <Route
+          path="applicants"
+          element={<HRApplicantManagement />}
         />
       </Route>
 
-      {/* Invalid route */}
+      {/* 404 */}
+
       <Route
         path="*"
         element={<Navigate to="/" replace />}
       />
+
     </Routes>
   );
 }

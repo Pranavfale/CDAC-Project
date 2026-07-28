@@ -9,7 +9,7 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
     },
     {
       name: "Job Management",
-      path: "/hr/vacancies",
+      path: "/hr/jobs",
       icon: "bi-briefcase",
     },
     {
@@ -44,7 +44,10 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
           tabIndex={0}
           aria-label="Close HR sidebar"
           onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === "Escape") {
+            if (
+              event.key === "Enter" ||
+              event.key === "Escape"
+            ) {
               closeSidebar();
             }
           }}
