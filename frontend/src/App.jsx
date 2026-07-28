@@ -22,15 +22,28 @@ import HRDashboard from "./pages/hr/HRDashboard";
 import HRJobManagement from "./pages/hr/HRJobManagement";
 import HRApplicantManagement from "./pages/hr/HRApplicantManagement";
 
+
+import LandingPage from './pages/public/LandingPage';
+import PublicJobs from "./pages/public/Jobs";
+import PublicJobDetails from "./pages/public/JobDetails";
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import Unauthorized from './pages/public/Unauthorized';
+
 function App() {
   return (
     <Routes>
+  {/* ================= PUBLIC ================= */}
 
-      {/* Default Route */}
-      <Route
-        path="/"
-        element={<Navigate to="/admin/dashboard" replace />}
-      />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/jobs" element={<PublicJobs />} />
+      <Route path="/jobs/:jobId" element={<PublicJobDetails />} />
+
+      <Route path="/login" element={<Login />} />
+
+      <Route path="/register" element={<Register />} />
+
+      <Route path="/unauthorized" element={<Unauthorized />} />
 
       {/* ================= ADMIN ================= */}
 
