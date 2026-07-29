@@ -1,38 +1,43 @@
 import { NavLink } from "react-router-dom";
 
 function HRSidebar({ sidebarOpen, closeSidebar }) {
-  const menuItems = [
-    {
-      name: "Dashboard",
-      path: "/hr/dashboard",
-      icon: "bi-speedometer2",
-    },
-    {
-      name: "Job Management",
-      path: "/hr/jobs",
-      icon: "bi-briefcase",
-    },
-    {
-      name: "Applicants",
-      path: "/hr/applicants",
-      icon: "bi-people",
-    },
-    {
-      name: "Interviews",
-      path: "/hr/interviews",
-      icon: "bi-calendar-event",
-    },
-    {
-      name: "Offers",
-      path: "/hr/offers",
-      icon: "bi-file-earmark-check",
-    },
-    {
-      name: "My Profile",
-      path: "/hr/profile",
-      icon: "bi-person-circle",
-    },
-  ];
+const menuItems = [
+  {
+    name: "Dashboard",
+    path: "/hr/dashboard",
+    icon: "bi-speedometer2",
+  },
+  {
+    name: "Job Management",
+    path: "/hr/jobs",
+    icon: "bi-briefcase",
+  },
+  {
+    name: "Applicants",
+    path: "/hr/applicants",
+    icon: "bi-people",
+  },
+  {
+    name: "Interviews",
+    path: "/hr/interviews",
+    icon: "bi-calendar-event",
+  },
+  {
+    name: "Offers",
+    path: "/hr/offers",
+    icon: "bi-file-earmark-check",
+  },
+  {
+    name: "Reports & Analytics",
+    path: "/hr/reports",
+    icon: "bi-bar-chart-line",
+  },
+  {
+    name: "My Profile",
+    path: "/hr/profile",
+    icon: "bi-person-circle",
+  },
+];
 
   return (
     <>
@@ -44,21 +49,14 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
           tabIndex={0}
           aria-label="Close HR sidebar"
           onKeyDown={(event) => {
-            if (
-              event.key === "Enter" ||
-              event.key === "Escape"
-            ) {
+            if (event.key === "Enter" || event.key === "Escape") {
               closeSidebar();
             }
           }}
         />
       )}
 
-      <aside
-        className={`hr-sidebar ${
-          sidebarOpen ? "hr-sidebar-open" : ""
-        }`}
-      >
+      <aside className={`hr-sidebar ${sidebarOpen ? "hr-sidebar-open" : ""}`}>
         <div className="hr-sidebar-header">
           <div className="hr-logo">
             <div className="hr-logo-icon">R</div>
@@ -79,19 +77,14 @@ function HRSidebar({ sidebarOpen, closeSidebar }) {
           </button>
         </div>
 
-        <nav
-          className="hr-sidebar-nav"
-          aria-label="HR navigation"
-        >
+        <nav className="hr-sidebar-nav" aria-label="HR navigation">
           {menuItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={closeSidebar}
               className={({ isActive }) =>
-                `hr-nav-link ${
-                  isActive ? "active" : ""
-                }`
+                `hr-nav-link ${isActive ? "active" : ""}`
               }
             >
               <i className={`bi ${item.icon}`}></i>

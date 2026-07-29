@@ -1,0 +1,432 @@
+.hr-reports-page {
+  width: 100%;
+}
+
+.hr-reports-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.hr-reports-header h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 26px;
+}
+
+.hr-reports-header p {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.hr-report-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hr-report-period {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hr-report-period i {
+  color: #6b7280;
+}
+
+.hr-report-period select {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #374151;
+  cursor: pointer;
+}
+
+.hr-export-report-button {
+  height: 42px;
+  padding: 0 15px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Summary cards */
+
+.hr-report-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.hr-report-summary-card {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.hr-report-card-icon {
+  width: 45px;
+  height: 45px;
+  min-width: 45px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.hr-report-summary-card span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.hr-report-summary-card strong {
+  display: block;
+  margin-top: 5px;
+  color: #111827;
+  font-size: 25px;
+}
+
+.hr-report-summary-card p {
+  margin: 5px 0 0;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* Main analytics */
+
+.hr-report-main-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 2fr)
+    minmax(300px, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.hr-report-panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.hr-report-panel-header {
+  min-height: 74px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hr-report-panel-header h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 17px;
+}
+
+.hr-report-panel-header p {
+  margin: 5px 0 0;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.hr-report-panel-header > i {
+  color: #2563eb;
+  font-size: 20px;
+}
+
+/* Bar chart */
+
+.hr-application-chart {
+  padding: 24px 20px;
+}
+
+.hr-chart-row {
+  display: grid;
+  grid-template-columns: 85px 1fr 45px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.hr-chart-row:last-child {
+  margin-bottom: 0;
+}
+
+.hr-chart-label {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.hr-chart-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 20px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.hr-chart-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: #2563eb;
+  transition: width 0.3s ease;
+}
+
+.hr-chart-row strong {
+  color: #111827;
+  font-size: 12px;
+  text-align: right;
+}
+
+/* Funnel */
+
+.hr-recruitment-funnel {
+  padding: 20px;
+}
+
+.hr-funnel-item {
+  margin-bottom: 18px;
+}
+
+.hr-funnel-item:last-child {
+  margin-bottom: 0;
+}
+
+.hr-funnel-info {
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.hr-funnel-info span {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.hr-funnel-info strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.hr-funnel-track {
+  height: 8px;
+  border-radius: 20px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.hr-funnel-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: #2563eb;
+  transition: width 0.3s ease;
+}
+
+/* Rates */
+
+.hr-report-rates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.hr-rate-card {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hr-rate-card span {
+  display: block;
+  margin-bottom: 7px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.hr-rate-card strong {
+  color: #111827;
+  font-size: 23px;
+}
+
+.hr-rate-card > i {
+  color: #2563eb;
+  font-size: 25px;
+}
+
+/* Table */
+
+.hr-top-jobs-panel {
+  margin-bottom: 24px;
+}
+
+.hr-report-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.hr-report-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hr-report-table th,
+.hr-report-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #f3f4f6;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.hr-report-table th {
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.hr-report-table td {
+  color: #4b5563;
+  font-size: 13px;
+}
+
+.hr-report-job-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hr-report-job-icon {
+  width: 35px;
+  height: 35px;
+  min-width: 35px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hr-report-job-cell strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.hr-hired-count {
+  display: inline-flex;
+  min-width: 30px;
+  height: 27px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #059669;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hr-job-report-status {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.hr-job-report-active {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.hr-job-report-closed {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Responsive */
+
+@media (max-width: 1150px) {
+  .hr-report-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 950px) {
+  .hr-report-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hr-report-rates-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .hr-reports-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hr-report-header-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hr-report-period {
+    width: 100%;
+  }
+
+  .hr-report-period select {
+    flex: 1;
+  }
+
+  .hr-export-report-button {
+    justify-content: center;
+  }
+
+  .hr-report-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hr-chart-row {
+    grid-template-columns: 65px 1fr 36px;
+    gap: 8px;
+  }
+
+  .hr-application-chart {
+    padding: 20px 14px;
+  }
+}
