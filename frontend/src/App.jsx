@@ -23,6 +23,8 @@ import CandidateProfile from "./pages/candidate/CandidateProfile";
 import HRDashboard from "./pages/hr/HRDashboard";
 import HRJobManagement from "./pages/hr/HRJobManagement";
 import HRApplicantManagement from "./pages/hr/HRApplicantManagement";
+import HRProfile from "./pages/hr/HRProfile";
+import HRInterviewManagement from "./pages/hr/HRInterviewManagement";
 
 import LandingPage from "./pages/public/LandingPage";
 import PublicJobs from "./pages/public/Jobs";
@@ -30,7 +32,6 @@ import PublicJobDetails from "./pages/public/JobDetails";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Unauthorized from "./pages/public/Unauthorized";
-import HRInterviewManagement from "./pages/hr/HRInterviewManagement";
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
       </Route>
 
       <Route path="interviews" element={<HRInterviewManagement />} />
+      <Route path="profile" element={<HRProfile />} />
       {/* 404 */}
 
       <Route path="*" element={<Navigate to="/" replace />} />
