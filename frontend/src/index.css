@@ -1,3 +1,22 @@
+:root {
+  --primary: #2563eb;
+  --primary-light: #eff6ff;
+
+  --surface: #ffffff;
+
+  --text-primary: #172033;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+
+  --radius-md: 8px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
