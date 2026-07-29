@@ -26,6 +26,7 @@ import HRApplicantManagement from "./pages/hr/HRApplicantManagement";
 import HRInterviewManagement from "./pages/hr/HRInterviewManagement";
 import HRProfile from "./pages/hr/HRProfile";
 import HRReports from "./pages/hr/HRReports";
+import HROfferManagement from "./pages/hr/HROfferManagement";
 
 import LandingPage from "./pages/public/LandingPage";
 import PublicJobs from "./pages/public/Jobs";
@@ -94,10 +95,10 @@ function App() {
 
         <Route path="interviews" element={<HRInterviewManagement />} />
 
-
         <Route path="reports" element={<HRReports />} />
 
         <Route path="profile" element={<HRProfile />} />
+        <Route path="offers" element={<HROfferManagement />} />
       </Route>
       {/* 404 */}
 
