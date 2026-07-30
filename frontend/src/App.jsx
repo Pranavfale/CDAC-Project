@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import HRManagement from "./pages/admin/HRManagement";
 import JobManagement from "./pages/admin/JobManagement";
+import Reports from "./pages/admin/Reports";
 
 // Candidate Pages
 import CandidateDashboard from "./pages/candidate/CandidateDashboard";
@@ -64,6 +65,8 @@ function App() {
         <Route path="candidates" element={<CandidateManagement />} />
 
         <Route path="jobs" element={<JobManagement />} />
+
+        <Route path="reports" element={<Reports />} />
       </Route>
 
       {/* ================= CANDIDATE ================= */}
