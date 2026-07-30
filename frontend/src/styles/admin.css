@@ -1033,3 +1033,197 @@
   color: #7c3aed;
 }
 
+/* ========================================
+   REPORTS & ANALYTICS
+======================================== */
+
+.admin-report-filter {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-report-filter i {
+  color: #6b7280;
+}
+
+.admin-report-filter select {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* REPORT GRID */
+
+.admin-reports-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* APPLICATION ACTIVITY */
+
+.admin-chart-container {
+  padding: 24px 20px;
+}
+
+.admin-chart-row {
+  display: grid;
+  grid-template-columns: 75px 1fr 45px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-chart-row:last-child {
+  margin-bottom: 0;
+}
+
+.admin-chart-label {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.admin-chart-row strong {
+  color: #111827;
+  font-size: 12px;
+  text-align: right;
+}
+
+.admin-chart-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 20px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.admin-chart-bar {
+  height: 100%;
+  border-radius: 20px;
+  background: #2563eb;
+}
+
+/* RECRUITMENT FUNNEL */
+
+.admin-funnel {
+  padding: 20px;
+}
+
+.admin-funnel-item {
+  margin-bottom: 19px;
+}
+
+.admin-funnel-item:last-child {
+  margin-bottom: 0;
+}
+
+.admin-funnel-item > div:first-child {
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-funnel-item span {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.admin-funnel-item strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.admin-funnel-track {
+  height: 8px;
+  border-radius: 20px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.admin-funnel-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: #2563eb;
+}
+
+/* REPORT TABLE */
+
+.admin-report-table-card {
+  margin-bottom: 24px;
+}
+
+.admin-hire-count {
+  display: inline-flex;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #059669;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* COMPANY REPORT */
+
+.admin-company-report {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-company-report strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.admin-company-report-icon {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 7px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* RESPONSIVE REPORTS */
+
+@media (max-width: 950px) {
+  .admin-reports-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-report-filter {
+    width: 100%;
+  }
+
+  .admin-report-filter select {
+    flex: 1;
+  }
+
+  .admin-chart-row {
+    grid-template-columns: 60px 1fr 38px;
+    gap: 8px;
+  }
+
+  .admin-chart-container {
+    padding: 20px 14px;
+  }
+}
