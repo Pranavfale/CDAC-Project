@@ -1,12 +1,17 @@
 package com.talentbridge.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.talentbridge.entity.User;
+import com.talentbridge.repository.UserRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,9 +22,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
+	private final UserRepository userRepository;
 
-	public JwtAuthenticationFilter(JwtService jwtService) {
+	public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
+
 		this.jwtService = jwtService;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -40,8 +48,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			String email = jwtService.extractEmail(token);
 
+			User user = userRepository.findByEmail(email).orElseThrow();
+
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null,
-					null);
+					List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
 
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
