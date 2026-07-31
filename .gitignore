@@ -12,6 +12,8 @@ target/
 .settings/
 .springBeans
 .sts4-cache/
+# Local database configuration
+talentbridge-backend/src/main/resources/application.properties
 
 # IntelliJ
 .idea/
