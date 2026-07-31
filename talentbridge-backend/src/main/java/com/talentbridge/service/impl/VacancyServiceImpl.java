@@ -1,6 +1,7 @@
 package com.talentbridge.service.impl;
 
 import com.talentbridge.dto.request.CreateVacancyRequest;
+import com.talentbridge.dto.request.UpdateVacancyStatusRequest;
 import com.talentbridge.dto.request.UpdateVacancyRequest;
 import com.talentbridge.dto.response.VacancyResponse;
 import com.talentbridge.entity.Vacancy;
@@ -119,5 +120,39 @@ public class VacancyServiceImpl implements VacancyService {
                 .closingDate(vacancy.getClosingDate())
                 .status(vacancy.getStatus())
                 .build();
+    }
+    
+    @Override
+    public void updateVacancyStatus(Long id,
+                                    UpdateVacancyStatusRequest request) {
+
+        Vacancy vacancy = vacancyRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Vacancy not found")
+                );
+
+
+        vacancy.setStatus(request.getStatus());
+
+        vacancyRepository.save(vacancy);
+    }
+    
+    @Override
+    public List<VacancyResponse> searchVacancies(String keyword) {
+
+        return vacancyRepository.searchByKeyword(keyword)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+
+    @Override
+    public List<VacancyResponse> getOpenVacancies() {
+
+        return vacancyRepository.findByStatus(VacancyStatus.OPEN)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 }
