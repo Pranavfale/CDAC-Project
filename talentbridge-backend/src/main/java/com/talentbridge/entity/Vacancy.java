@@ -3,7 +3,6 @@ package com.talentbridge.entity;
 import com.talentbridge.enums.VacancyStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -56,4 +55,8 @@ public class Vacancy {
     @Column(nullable = false)
     private VacancyStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "hr_id")
+    private User hr;
+    
 }

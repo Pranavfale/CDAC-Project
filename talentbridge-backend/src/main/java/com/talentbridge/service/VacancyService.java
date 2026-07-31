@@ -5,7 +5,8 @@ import com.talentbridge.dto.request.UpdateVacancyRequest;
 import com.talentbridge.dto.response.VacancyResponse;
 
 import java.util.List;
-
+import com.talentbridge.dto.request.UpdateVacancyStatusRequest;
+import java.util.List;
 public interface VacancyService {
 
     VacancyResponse createVacancy(CreateVacancyRequest request);
@@ -17,5 +18,11 @@ public interface VacancyService {
     VacancyResponse updateVacancy(Long id, UpdateVacancyRequest request);
 
     void deleteVacancy(Long id);
+    
+    void updateVacancyStatus(Long id, UpdateVacancyStatusRequest request);
+    
+    List<VacancyResponse> searchVacancies(String keyword);
+
+    List<VacancyResponse> getOpenVacancies();
 
 }

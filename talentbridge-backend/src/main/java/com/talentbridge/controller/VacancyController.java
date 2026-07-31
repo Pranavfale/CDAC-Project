@@ -1,6 +1,7 @@
 package com.talentbridge.controller;
 
 import com.talentbridge.dto.request.CreateVacancyRequest;
+import com.talentbridge.dto.request.UpdateVacancyStatusRequest;
 import com.talentbridge.dto.request.UpdateVacancyRequest;
 import com.talentbridge.dto.response.VacancyResponse;
 import com.talentbridge.service.VacancyService;
@@ -71,5 +72,33 @@ public class VacancyController {
         vacancyService.deleteVacancy(id);
 
         return ResponseEntity.noContent().build();
+    }
+    
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> updateVacancyStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateVacancyStatusRequest request) {
+
+
+        vacancyService.updateVacancyStatus(id, request);
+
+        return ResponseEntity.ok().build();
+    }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<VacancyResponse>> searchVacancies(
+            @RequestParam String keyword) {
+
+        return ResponseEntity.ok(
+                vacancyService.searchVacancies(keyword)
+        );
+    }
+    
+    @GetMapping("/open")
+    public ResponseEntity<List<VacancyResponse>> getOpenVacancies() {
+
+        return ResponseEntity.ok(
+                vacancyService.getOpenVacancies()
+        );
     }
 }
