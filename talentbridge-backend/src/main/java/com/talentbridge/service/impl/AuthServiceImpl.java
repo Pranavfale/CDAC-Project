@@ -9,6 +9,7 @@ import com.talentbridge.dto.response.AuthenticationResponse;
 import com.talentbridge.entity.User;
 import com.talentbridge.enums.Role;
 import com.talentbridge.repository.UserRepository;
+import com.talentbridge.security.JwtService;
 import com.talentbridge.service.AuthService;
 
 @Service
@@ -16,11 +17,13 @@ public class AuthServiceImpl implements AuthService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final JwtService jwtService;
 
-	public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+	public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
 
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.jwtService = jwtService;
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
 
 		userRepository.save(user);
 
-		return new AuthenticationResponse(null, user.getEmail(), user.getRole());
+		return new AuthenticationResponse(jwtService.generateToken(user.getEmail()), user.getEmail(), user.getRole());
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
 			throw new RuntimeException("Invalid email or password");
 		}
 
-		return new AuthenticationResponse(null, user.getEmail(), user.getRole());
+		return new AuthenticationResponse(jwtService.generateToken(user.getEmail()), user.getEmail(), user.getRole());
 	}
 
 }
