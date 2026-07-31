@@ -1,5 +1,8 @@
 package com.talentbridge.service.impl;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,6 +11,8 @@ import com.talentbridge.dto.response.CandidateProfileResponse;
 import com.talentbridge.entity.CandidateProfile;
 import com.talentbridge.entity.User;
 import com.talentbridge.enums.Role;
+import com.talentbridge.exception.CandidateProfileNotFoundException;
+import com.talentbridge.exception.DuplicateCandidateProfileException;
 import com.talentbridge.mapper.CandidateProfileMapper;
 import com.talentbridge.repository.CandidateProfileRepository;
 import com.talentbridge.repository.UserRepository;
@@ -51,8 +56,9 @@ public class CandidateProfileServiceImpl
 
         CandidateProfile profile = candidateProfileRepository
                 .findByUser_Id(candidate.getId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Candidate profile not found"));
+                .orElseThrow(() ->
+                        new CandidateProfileNotFoundException(
+                                "Candidate profile not found"));
 
         return candidateProfileMapper.toResponse(profile);
     }
@@ -67,10 +73,11 @@ public class CandidateProfileServiceImpl
 
         User candidate = getActiveCandidate(authenticatedEmail);
 
-        if (candidateProfileRepository
-                .existsByUser_Id(candidate.getId())) {
+        boolean profileExists = candidateProfileRepository
+                .existsByUser_Id(candidate.getId());
 
-            throw new IllegalStateException(
+        if (profileExists) {
+            throw new DuplicateCandidateProfileException(
                     "Candidate profile already exists");
         }
 
@@ -100,8 +107,9 @@ public class CandidateProfileServiceImpl
         CandidateProfile existingProfile =
                 candidateProfileRepository
                         .findByUser_Id(candidate.getId())
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Candidate profile not found"));
+                        .orElseThrow(() ->
+                                new CandidateProfileNotFoundException(
+                                        "Candidate profile not found"));
 
         candidateProfileMapper.updateEntity(
                 request,
@@ -117,7 +125,8 @@ public class CandidateProfileServiceImpl
     }
 
     /**
-     * Loads and validates the authenticated user.
+     * Loads the authenticated user and verifies that the account belongs
+     * to an active candidate.
      */
     private User getActiveCandidate(
             String authenticatedEmail) {
@@ -125,17 +134,19 @@ public class CandidateProfileServiceImpl
         String normalizedEmail =
                 normalizeEmail(authenticatedEmail);
 
-        User user = userRepository.findByEmail(normalizedEmail)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Authenticated user not found"));
+        User user = userRepository
+                .findByEmail(normalizedEmail)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                "Authenticated user not found"));
 
         if (!user.isActive()) {
-            throw new IllegalStateException(
+            throw new AccessDeniedException(
                     "User account is inactive");
         }
 
         if (user.getRole() != Role.CANDIDATE) {
-            throw new IllegalStateException(
+            throw new AccessDeniedException(
                     "Only candidates can manage a candidate profile");
         }
 
@@ -143,8 +154,8 @@ public class CandidateProfileServiceImpl
     }
 
     /**
-     * Prevents null or blank authentication identities from reaching the
-     * repository.
+     * Prevents a null or blank authentication identity from reaching
+     * the database.
      */
     private String normalizeEmail(
             String authenticatedEmail) {
@@ -152,7 +163,7 @@ public class CandidateProfileServiceImpl
         if (authenticatedEmail == null
                 || authenticatedEmail.isBlank()) {
 
-            throw new IllegalArgumentException(
+            throw new AuthenticationCredentialsNotFoundException(
                     "Authenticated email is required");
         }
 
@@ -160,18 +171,13 @@ public class CandidateProfileServiceImpl
     }
 
     /**
-     * Calculates a backend-controlled completion percentage.
+     * Calculates the backend-controlled profile completion percentage.
      *
-     * The project specification requires a completion percentage but does
-     * not prescribe an exact weighting formula.
+     * Eighteen core profile fields contribute five points each.
+     * A stored resume contributes ten points.
      *
-     * This implementation assigns:
-     *
-     * - 5 points to each of 18 core profile fields = 90 points
-     * - 10 points for a successfully stored resume
-     *
-     * Current company and current designation are not counted because they
-     * may legitimately be empty for fresher candidates.
+     * Current company and designation are not counted because they may
+     * legitimately be empty for fresher candidates.
      */
     private int calculateProfileCompletion(
             CandidateProfile profile) {
@@ -216,6 +222,9 @@ public class CandidateProfileServiceImpl
         return Math.min(completion, 100);
     }
 
+    /**
+     * Returns true when the supplied text contains a non-whitespace value.
+     */
     private boolean hasText(String value) {
         return value != null && !value.isBlank();
     }
