@@ -54,3 +54,6 @@ logs/
 # Operating-system files
 .DS_Store
 Thumbs.db
+
+# Eclipse / STS workspace
+.metadata/
