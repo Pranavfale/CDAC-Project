@@ -1,95 +1,114 @@
 import hmac
 import os
-from collections.abc import Awaitable, Callable
 
-from fastapi import Request, status
-from fastapi.responses import JSONResponse, Response
+from datetime import datetime
+
+from dotenv import load_dotenv
+from fastapi import Request
+from starlette.middleware.base import (
+    BaseHTTPMiddleware,
+    RequestResponseEndpoint,
+)
+from starlette.responses import JSONResponse, Response
 
 
-INTERNAL_API_PREFIX = "/internal/api/v1/"
-HEALTH_ENDPOINT = "/internal/health"
-AI_SERVICE_KEY_HEADER = "X-AI-Service-Key"
+load_dotenv()
 
 
-def create_authentication_error() -> JSONResponse:
+PROTECTED_API_PREFIX = "/internal/api/v1"
+INTERNAL_API_KEY_HEADER = "X-AI-Service-Key"
+
+
+class InternalApiKeyMiddleware(BaseHTTPMiddleware):
     """
-    Create the controlled response returned when the caller does not
-    provide the correct internal AI service key.
-    """
+    Protect internal AI endpoints using a shared service key.
 
-    return JSONResponse(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        content={
-            "status": "FAILED",
-            "errorCode": "INTERNAL_API_KEY_INVALID",
-            "message": "Internal service authentication failed.",
-        },
-    )
-
-
-def create_configuration_error() -> JSONResponse:
-    """
-    Create a controlled response when the AI service itself has not
-    been configured with an internal API key.
+    The health endpoint and documentation routes remain available
+    without the internal API key.
     """
 
-    return JSONResponse(
-        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-        content={
-            "status": "FAILED",
-            "errorCode": "AI_SERVICE_CONFIGURATION_ERROR",
-            "message": "The AI service is not configured correctly.",
-        },
-    )
+    def __init__(
+        self,
+        app,
+        protected_prefix: str = PROTECTED_API_PREFIX,
+    ) -> None:
+        super().__init__(app)
 
+        self.protected_prefix = protected_prefix
 
-def keys_match(provided_key: str, expected_key: str) -> bool:
-    """
-    Compare the provided and expected keys without using a normal
-    equality comparison.
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: RequestResponseEndpoint,
+    ) -> Response:
+        """
+        Validate the internal API key before processing protected
+        requests.
+        """
 
-    compare_digest reduces timing differences that could otherwise
-    reveal information about a secret value.
-    """
+        if not request.url.path.startswith(
+            self.protected_prefix
+        ):
+            return await call_next(request)
 
-    if not provided_key or not expected_key:
-        return False
+        configured_key = (
+            os.getenv("AI_INTERNAL_API_KEY")
+            or os.getenv("INTERNAL_API_KEY")
+        )
 
-    return hmac.compare_digest(
-        provided_key.encode("utf-8"),
-        expected_key.encode("utf-8"),
-    )
+        if not configured_key:
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "status": "ERROR",
+                    "errorCode": (
+                        "INTERNAL_API_KEY_NOT_CONFIGURED"
+                    ),
+                    "message": (
+                        "The internal AI service key is "
+                        "not configured."
+                    ),
+                    "receivedAt": (
+                        datetime.now()
+                        .astimezone()
+                        .isoformat()
+                    ),
+                },
+            )
 
+        supplied_key = request.headers.get(
+            INTERNAL_API_KEY_HEADER
+        )
 
-async def internal_api_key_middleware(
-    request: Request,
-    call_next: Callable[[Request], Awaitable[Response]],
-) -> Response:
-    """
-    Require X-AI-Service-Key for protected internal AI endpoints.
+        if (
+            supplied_key is None
+            or not hmac.compare_digest(
+                supplied_key,
+                configured_key,
+            )
+        ):
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "status": "ERROR",
+                    "errorCode": (
+                        "INTERNAL_API_KEY_INVALID"
+                    ),
+                    "message": (
+                        "A valid internal AI service key "
+                        "is required."
+                    ),
+                    "receivedAt": (
+                        datetime.now()
+                        .astimezone()
+                        .isoformat()
+                    ),
+                },
+                headers={
+                    "WWW-Authenticate": (
+                        INTERNAL_API_KEY_HEADER
+                    ),
+                },
+            )
 
-    The health endpoint remains available for local and Docker
-    health monitoring. Swagger documentation also remains available
-    during development.
-    """
-
-    request_path = request.url.path
-
-    # Routes outside the protected internal AI API continue normally.
-    if not request_path.startswith(INTERNAL_API_PREFIX):
         return await call_next(request)
-
-    expected_key = os.getenv("AI_INTERNAL_API_KEY", "").strip()
-
-    if not expected_key:
-        return create_configuration_error()
-
-    provided_key = request.headers.get(
-        AI_SERVICE_KEY_HEADER,
-        "",
-    ).strip()
-
-    if not keys_match(provided_key, expected_key):
-        return create_authentication_error()
-
-    return await call_next(request)
