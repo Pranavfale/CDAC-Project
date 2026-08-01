@@ -35,6 +35,29 @@ public interface ApplicationService {
             String authenticatedEmail);
 
     /**
+     * Returns one application only when it belongs to the authenticated
+     * candidate.
+     *
+     * @param authenticatedEmail authenticated candidate email
+     * @param applicationId application database ID
+     * @return owned application details
+     */
+    ApplicationResponse getCandidateApplication(
+            String authenticatedEmail,
+            Long applicationId);
+
+    /**
+     * Withdraws an application belonging to the authenticated candidate.
+     *
+     * @param authenticatedEmail authenticated candidate email
+     * @param applicationId application database ID
+     * @return application with WITHDRAWN status
+     */
+    ApplicationResponse withdrawApplication(
+            String authenticatedEmail,
+            Long applicationId);
+
+    /**
      * Returns applications submitted for one vacancy.
      *
      * This operation is intended for HR and Admin users.

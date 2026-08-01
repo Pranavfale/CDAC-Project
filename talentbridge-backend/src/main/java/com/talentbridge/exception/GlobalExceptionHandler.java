@@ -28,12 +28,16 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
 
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(GlobalExceptionHandler.class);
+            LoggerFactory.getLogger(
+                    GlobalExceptionHandler.class);
 
-    @ExceptionHandler(CandidateProfileNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCandidateProfileNotFound(
-            CandidateProfileNotFoundException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        CandidateProfileNotFoundException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleCandidateProfileNotFound(
+                    CandidateProfileNotFoundException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.NOT_FOUND,
@@ -41,10 +45,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(DuplicateCandidateProfileException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateCandidateProfile(
-            DuplicateCandidateProfileException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        DuplicateCandidateProfileException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleDuplicateCandidateProfile(
+                    DuplicateCandidateProfileException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.CONFLICT,
@@ -56,9 +63,10 @@ public class GlobalExceptionHandler {
         VacancyNotFoundException.class,
         ApplicationNotFoundException.class
     })
-    public ResponseEntity<ErrorResponse> handleApplicationResourceNotFound(
-            RuntimeException exception,
-            HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse>
+            handleApplicationResourceNotFound(
+                    RuntimeException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.NOT_FOUND,
@@ -66,10 +74,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(DuplicateApplicationException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateApplication(
-            DuplicateApplicationException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        DuplicateApplicationException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleDuplicateApplication(
+                    DuplicateApplicationException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.CONFLICT,
@@ -77,10 +88,27 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(VacancyNotAvailableException.class)
-    public ResponseEntity<ErrorResponse> handleVacancyNotAvailable(
-            VacancyNotAvailableException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        VacancyNotAvailableException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleVacancyNotAvailable(
+                    VacancyNotAvailableException exception,
+                    HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                request);
+    }
+
+    @ExceptionHandler(
+        ApplicationWithdrawalNotAllowedException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleApplicationWithdrawalNotAllowed(
+                    ApplicationWithdrawalNotAllowedException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.CONFLICT,
@@ -92,9 +120,10 @@ public class GlobalExceptionHandler {
         AuthenticationCredentialsNotFoundException.class,
         UsernameNotFoundException.class
     })
-    public ResponseEntity<ErrorResponse> handleAuthenticationFailure(
-            RuntimeException exception,
-            HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse>
+            handleAuthenticationFailure(
+                    RuntimeException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.UNAUTHORIZED,
@@ -103,9 +132,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(
-            AccessDeniedException exception,
-            HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse>
+            handleAccessDenied(
+                    AccessDeniedException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.FORBIDDEN,
@@ -113,20 +143,26 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationFailure(
-            MethodArgumentNotValidException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        MethodArgumentNotValidException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleValidationFailure(
+                    MethodArgumentNotValidException exception,
+                    HttpServletRequest request) {
 
-        String message = exception.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError ->
-                        fieldError.getField()
-                                + ": "
-                                + fieldError.getDefaultMessage())
-                .distinct()
-                .collect(Collectors.joining("; "));
+        String message =
+                exception.getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .map(fieldError ->
+                                fieldError.getField()
+                                        + ": "
+                                        + fieldError
+                                                .getDefaultMessage())
+                        .distinct()
+                        .collect(
+                                Collectors.joining("; "));
 
         if (message.isBlank()) {
             message = "Request validation failed";
@@ -138,10 +174,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgument(
-            IllegalArgumentException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        IllegalArgumentException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleIllegalArgument(
+                    IllegalArgumentException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
@@ -149,10 +188,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleUnreadableRequest(
-            HttpMessageNotReadableException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        HttpMessageNotReadableException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleUnreadableRequest(
+                    HttpMessageNotReadableException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
@@ -160,10 +202,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(InvalidResumeFileException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidResumeFile(
-            InvalidResumeFileException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        InvalidResumeFileException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleInvalidResumeFile(
+                    InvalidResumeFileException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
@@ -171,10 +216,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(MissingServletRequestPartException.class)
-    public ResponseEntity<ErrorResponse> handleMissingRequestPart(
-            MissingServletRequestPartException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        MissingServletRequestPartException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleMissingRequestPart(
+                    MissingServletRequestPartException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
@@ -182,10 +230,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<ErrorResponse> handleMaximumUploadSize(
-            MaxUploadSizeExceededException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        MaxUploadSizeExceededException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleMaximumUploadSize(
+                    MaxUploadSizeExceededException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.PAYLOAD_TOO_LARGE,
@@ -193,10 +244,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(ResumeNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResumeNotFound(
-            ResumeNotFoundException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        ResumeNotFoundException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleResumeNotFound(
+                    ResumeNotFoundException exception,
+                    HttpServletRequest request) {
 
         return buildErrorResponse(
                 HttpStatus.NOT_FOUND,
@@ -204,10 +258,13 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(ResumeStorageException.class)
-    public ResponseEntity<ErrorResponse> handleResumeStorageFailure(
-            ResumeStorageException exception,
-            HttpServletRequest request) {
+    @ExceptionHandler(
+        ResumeStorageException.class
+    )
+    public ResponseEntity<ErrorResponse>
+            handleResumeStorageFailure(
+                    ResumeStorageException exception,
+                    HttpServletRequest request) {
 
         LOGGER.error(
                 "Resume storage operation failed for request path: {}",
@@ -221,9 +278,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpectedException(
-            Exception exception,
-            HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse>
+            handleUnexpectedException(
+                    Exception exception,
+                    HttpServletRequest request) {
 
         LOGGER.error(
                 "Unexpected server error for request path: {}",
@@ -236,10 +294,11 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(
-            HttpStatus status,
-            String message,
-            HttpServletRequest request) {
+    private ResponseEntity<ErrorResponse>
+            buildErrorResponse(
+                    HttpStatus status,
+                    String message,
+                    HttpServletRequest request) {
 
         ErrorResponse errorResponse =
                 new ErrorResponse(
