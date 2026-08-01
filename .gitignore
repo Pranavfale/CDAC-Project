@@ -43,6 +43,9 @@ bin/
 obj/
 .vs/
 
+# .NET local secrets
+TalentBridge.NotificationEmailService/appsettings.Development.json
+
 # Uploads and generated files
 # Root-level runtime directories
 /uploads/
