@@ -2,46 +2,79 @@ package com.talentbridge.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
+/**
+ * Configures stateless JWT security and route-level authorization.
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-	}
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        this.jwtAuthenticationFilter =
+                jwtAuthenticationFilter;
+    }
 
-		http.csrf(csrf -> csrf.disable())
+    @Bean
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
 
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http
+                .csrf(csrf ->
+                        csrf.disable())
 
-				.authorizeHttpRequests(auth -> auth
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS))
 
-						.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                .authorizeHttpRequests(auth ->
+                        auth
+                                .requestMatchers(
+                                        "/api/auth/register",
+                                        "/api/auth/login")
+                                .permitAll()
 
-						.requestMatchers("/api/offers/**").permitAll()
+                                .requestMatchers(
+                                        "/api/v1/public/vacancies",
+                                        "/api/v1/public/vacancies/**")
+                                .permitAll()
 
-						.requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers(
+                                        "/api/offers/**")
+                                .permitAll()
 
-						.requestMatchers("/api/hr/**").hasAnyRole("HR", "ADMIN")
+                                .requestMatchers(
+                                        "/api/admin/**")
+                                .hasRole("ADMIN")
 
-						.requestMatchers("/api/candidate/**").hasAnyRole("CANDIDATE", "ADMIN")
+                                .requestMatchers(
+                                        "/api/hr/**")
+                                .hasAnyRole(
+                                        "HR",
+                                        "ADMIN")
 
-						.anyRequest().authenticated())
+                                .requestMatchers(
+                                        "/api/candidate/**")
+                                .hasAnyRole(
+                                        "CANDIDATE",
+                                        "ADMIN")
 
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                .anyRequest()
+                                .authenticated())
 
-		return http.build();
-	}
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
+        return http.build();
+    }
 }
