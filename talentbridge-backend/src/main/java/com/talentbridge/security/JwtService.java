@@ -3,7 +3,8 @@ package com.talentbridge.security;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
-
+import java.nio.charset.StandardCharsets;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -13,12 +14,11 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-	private static final String SECRET_KEY = "TalentBridgeSecretKeyForJWTAuthentication2026Secure";
-
 	private final SecretKey key;
 
-	public JwtService() {
-		this.key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+	public JwtService(@Value("${jwt.secret}") String secretKey) {
+
+		this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 	}
 
 	public String generateToken(String email) {
@@ -47,5 +47,4 @@ public class JwtService {
 			return false;
 		}
 	}
-
 }
