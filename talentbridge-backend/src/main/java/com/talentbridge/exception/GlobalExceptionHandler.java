@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import com.talentbridge.dto.response.ErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+import com.talentbridge.exception.InactiveUserException;
 /**
  * Converts application exceptions into consistent HTTP error responses.
  */
@@ -58,6 +58,17 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<ErrorResponse> handleAuthenticationFailure(
             RuntimeException exception,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage(),
+                request);
+    }
+    
+    @ExceptionHandler(InactiveUserException.class)
+    public ResponseEntity<ErrorResponse> handleInactiveUser(
+            InactiveUserException exception,
             HttpServletRequest request) {
 
         return buildErrorResponse(
