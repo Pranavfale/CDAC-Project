@@ -1,6 +1,7 @@
 package com.talentbridge.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import com.talentbridge.dto.response.ResumeDownload;
 
 import com.talentbridge.dto.request.CandidateProfileRequest;
 import com.talentbridge.dto.response.CandidateProfileResponse;
@@ -59,4 +60,12 @@ public interface CandidateProfileService {
     CandidateProfileResponse uploadResume(
             String authenticatedEmail,
             MultipartFile file);
+    /**
+     * Downloads the resume belonging to the authenticated candidate.
+     *
+     * @param authenticatedEmail email obtained from Spring Security
+     * @return secure resume download information
+     */
+    ResumeDownload downloadResume(
+            String authenticatedEmail);
 }

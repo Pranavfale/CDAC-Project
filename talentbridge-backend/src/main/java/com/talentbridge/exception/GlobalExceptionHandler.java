@@ -1,7 +1,6 @@
 package com.talentbridge.exception;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -13,15 +12,14 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import com.talentbridge.dto.response.ErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
-import com.talentbridge.exception.InactiveUserException;
 
 /**
  * Converts application exceptions into consistent HTTP error responses.
@@ -29,172 +27,254 @@ import com.talentbridge.exception.InactiveUserException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-	@ExceptionHandler(CandidateProfileNotFoundException.class)
-	public ResponseEntity<ErrorResponse> handleCandidateProfileNotFound(CandidateProfileNotFoundException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles a Candidate Profile that does not exist.
+     *
+     * HTTP 404 Not Found
+     */
+    @ExceptionHandler(CandidateProfileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCandidateProfileNotFound(
+            CandidateProfileNotFoundException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
-	}
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                request);
+    }
 
-	@ExceptionHandler(DuplicateCandidateProfileException.class)
-	public ResponseEntity<ErrorResponse> handleDuplicateCandidateProfile(DuplicateCandidateProfileException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles an attempt to create more than one Candidate Profile.
+     *
+     * HTTP 409 Conflict
+     */
+    @ExceptionHandler(DuplicateCandidateProfileException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateCandidateProfile(
+            DuplicateCandidateProfileException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.CONFLICT, exception.getMessage(), request);
-	}
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                request);
+    }
 
-	@ExceptionHandler({ AuthenticationCredentialsNotFoundException.class, UsernameNotFoundException.class })
-	public ResponseEntity<ErrorResponse> handleAuthenticationFailure(RuntimeException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles missing authentication information or an authenticated user
+     * that cannot be found.
+     *
+     * HTTP 401 Unauthorized
+     */
+    @ExceptionHandler({
+        AuthenticationCredentialsNotFoundException.class,
+        UsernameNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailure(
+            RuntimeException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
-	}
+        return buildErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage(),
+                request);
+    }
 
-	@ExceptionHandler(InactiveUserException.class)
-	public ResponseEntity<ErrorResponse> handleInactiveUser(InactiveUserException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles inactive accounts and users without the required role.
+     *
+     * HTTP 403 Forbidden
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
-	}
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage(),
+                request);
+    }
 
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles validation errors produced by @Valid request DTOs.
+     *
+     * HTTP 400 Bad Request
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationFailure(
+            MethodArgumentNotValidException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.FORBIDDEN, exception.getMessage(), request);
-	}
+        String message = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError ->
+                        fieldError.getField()
+                                + ": "
+                                + fieldError.getDefaultMessage())
+                .distinct()
+                .collect(Collectors.joining("; "));
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleValidationFailure(MethodArgumentNotValidException exception,
-			HttpServletRequest request) {
+        if (message.isBlank()) {
+            message = "Request validation failed";
+        }
 
-		String message = exception.getBindingResult().getFieldErrors().stream()
-				.map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage()).distinct()
-				.collect(Collectors.joining("; "));
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                message,
+                request);
+    }
 
-		if (message.isBlank()) {
-			message = "Request validation failed";
-		}
+    /**
+     * Handles malformed JSON, invalid dates and invalid numeric values.
+     *
+     * HTTP 400 Bad Request
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleUnreadableRequest(
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request);
-	}
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Request body is missing or contains invalid data",
+                request);
+    }
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<ErrorResponse> handleUnreadableRequest(HttpMessageNotReadableException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles invalid resume files, including unsupported extensions,
+     * invalid MIME types, unsafe names and invalid file signatures.
+     *
+     * HTTP 400 Bad Request
+     */
+    @ExceptionHandler(InvalidResumeFileException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidResumeFile(
+            InvalidResumeFileException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.BAD_REQUEST, "Request body is missing or contains invalid data", request);
-	}
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                request);
+    }
 
-	@ExceptionHandler(InvalidResumeFileException.class)
-	public ResponseEntity<ErrorResponse> handleInvalidResumeFile(InvalidResumeFileException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles multipart requests that do not contain the required file part.
+     *
+     * HTTP 400 Bad Request
+     */
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ErrorResponse> handleMissingRequestPart(
+            MissingServletRequestPartException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage(), request);
-	}
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Resume file is required",
+                request);
+    }
 
-	@ExceptionHandler(MissingServletRequestPartException.class)
-	public ResponseEntity<ErrorResponse> handleMissingRequestPart(MissingServletRequestPartException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles resume uploads rejected by Spring's multipart size limit.
+     *
+     * HTTP 413 Payload Too Large
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaximumUploadSize(
+            MaxUploadSizeExceededException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.BAD_REQUEST, "Resume file is required", request);
-	}
+        return buildErrorResponse(
+                HttpStatus.PAYLOAD_TOO_LARGE,
+                "Resume file must not exceed 5 MB",
+                request);
+    }
 
-	@ExceptionHandler(MaxUploadSizeExceededException.class)
-	public ResponseEntity<ErrorResponse> handleMaximumUploadSize(MaxUploadSizeExceededException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles candidates who have not uploaded a resume or whose stored
+     * resume file no longer exists.
+     *
+     * HTTP 404 Not Found
+     */
+    @ExceptionHandler(ResumeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResumeNotFound(
+            ResumeNotFoundException exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE, "Resume file must not exceed 5 MB", request);
-	}
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                request);
+    }
 
-	@ExceptionHandler(ResumeStorageException.class)
-	public ResponseEntity<ErrorResponse> handleResumeStorageFailure(ResumeStorageException exception,
-			HttpServletRequest request) {
+    /**
+     * Handles unexpected filesystem problems while storing, loading or
+     * deleting resume files.
+     *
+     * Internal filesystem details are logged but not exposed to clients.
+     *
+     * HTTP 500 Internal Server Error
+     */
+    @ExceptionHandler(ResumeStorageException.class)
+    public ResponseEntity<ErrorResponse> handleResumeStorageFailure(
+            ResumeStorageException exception,
+            HttpServletRequest request) {
 
-		LOGGER.error("Resume storage operation failed for request path: {}", request.getRequestURI(), exception);
+        LOGGER.error(
+                "Resume storage operation failed for request path: {}",
+                request.getRequestURI(),
+                exception);
 
-		return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Resume file operation failed", request);
-	}
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Resume file operation failed",
+                request);
+    }
 
-	@ExceptionHandler(InvalidCredentialsException.class)
-	public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException exception,
-			HttpServletRequest request) {
+    /**
+     * Final fallback for unexpected application errors.
+     *
+     * The full exception is logged, while only a safe message is returned.
+     *
+     * HTTP 500 Internal Server Error
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(
+            Exception exception,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
-	}
+        LOGGER.error(
+                "Unexpected server error for request path: {}",
+                request.getRequestURI(),
+                exception);
 
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<ErrorResponse> handleRuntime(RuntimeException exception, HttpServletRequest request) {
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "An unexpected server error occurred",
+                request);
+    }
 
-		LOGGER.error("Runtime exception for request path: {}", request.getRequestURI(), exception);
+    /**
+     * Creates the common ErrorResponse format.
+     */
+    private ResponseEntity<ErrorResponse> buildErrorResponse(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request) {
 
-		return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), request);
-	}
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                status.name(),
+                message,
+                request.getRequestURI(),
+                null);
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception exception, HttpServletRequest request) {
-
-		LOGGER.error("Unexpected server error for request path: {}", request.getRequestURI(), exception);
-
-		return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected server error occurred", request);
-	}
-
-	private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message,
-			HttpServletRequest request) {
-
-		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), status.value(), status.name(), message,
-				request.getRequestURI(), null);
-
-		return ResponseEntity.status(status).body(errorResponse);
-	}
-	
-	@ExceptionHandler({
-	    OfferNotFoundException.class,
-	    ApplicationNotFoundException.class
-	})
-	public ResponseEntity<ErrorResponse>
-	    handleOfferResourceNotFound(
-	        RuntimeException exception,
-	        HttpServletRequest request
-	    ) {
-
-	    return buildErrorResponse(
-	        HttpStatus.NOT_FOUND,
-	        exception.getMessage(),
-	        request
-	    );
-	}
-
-	@ExceptionHandler({
-	    DuplicateOfferException.class,
-	    ApplicationNotSelectedException.class
-	})
-	public ResponseEntity<ErrorResponse>
-	    handleOfferConflict(
-	        RuntimeException exception,
-	        HttpServletRequest request
-	    ) {
-
-	    return buildErrorResponse(
-	        HttpStatus.CONFLICT,
-	        exception.getMessage(),
-	        request
-	    );
-	}
-
-	@ExceptionHandler(InvalidOfferException.class)
-	public ResponseEntity<ErrorResponse>
-	    handleInvalidOffer(
-	        InvalidOfferException exception,
-	        HttpServletRequest request
-	    ) {
-
-	    return buildErrorResponse(
-	        HttpStatus.BAD_REQUEST,
-	        exception.getMessage(),
-	        request
-	    );
-	}
+        return ResponseEntity
+                .status(status)
+                .body(errorResponse);
+    }
 }

@@ -16,6 +16,14 @@ public interface ResumeStorageService {
     StoredResume store(MultipartFile file);
 
     /**
+     * Securely loads a stored resume using its generated internal filename.
+     *
+     * @param storedFileName generated stored filename
+     * @return loaded resume resource and response metadata
+     */
+    StoredResumeFile load(String storedFileName);
+
+    /**
      * Deletes a previously stored resume when it exists.
      *
      * A null or blank filename is ignored.
