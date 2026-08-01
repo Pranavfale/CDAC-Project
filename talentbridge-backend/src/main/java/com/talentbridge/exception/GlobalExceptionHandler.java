@@ -30,11 +30,6 @@ public class GlobalExceptionHandler {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    /**
-     * Handles a Candidate Profile that does not exist.
-     *
-     * HTTP 404 Not Found
-     */
     @ExceptionHandler(CandidateProfileNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCandidateProfileNotFound(
             CandidateProfileNotFoundException exception,
@@ -46,11 +41,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles an attempt to create more than one Candidate Profile.
-     *
-     * HTTP 409 Conflict
-     */
     @ExceptionHandler(DuplicateCandidateProfileException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateCandidateProfile(
             DuplicateCandidateProfileException exception,
@@ -62,12 +52,42 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles missing authentication information or an authenticated user
-     * that cannot be found.
-     *
-     * HTTP 401 Unauthorized
-     */
+    @ExceptionHandler({
+        VacancyNotFoundException.class,
+        ApplicationNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponse> handleApplicationResourceNotFound(
+            RuntimeException exception,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                request);
+    }
+
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateApplication(
+            DuplicateApplicationException exception,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                request);
+    }
+
+    @ExceptionHandler(VacancyNotAvailableException.class)
+    public ResponseEntity<ErrorResponse> handleVacancyNotAvailable(
+            VacancyNotAvailableException exception,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                request);
+    }
+
     @ExceptionHandler({
         AuthenticationCredentialsNotFoundException.class,
         UsernameNotFoundException.class
@@ -82,11 +102,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles inactive accounts and users without the required role.
-     *
-     * HTTP 403 Forbidden
-     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(
             AccessDeniedException exception,
@@ -98,11 +113,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles validation errors produced by @Valid request DTOs.
-     *
-     * HTTP 400 Bad Request
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationFailure(
             MethodArgumentNotValidException exception,
@@ -128,11 +138,17 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles malformed JSON, invalid dates and invalid numeric values.
-     *
-     * HTTP 400 Bad Request
-     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(
+            IllegalArgumentException exception,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                request);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleUnreadableRequest(
             HttpMessageNotReadableException exception,
@@ -144,12 +160,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles invalid resume files, including unsupported extensions,
-     * invalid MIME types, unsafe names and invalid file signatures.
-     *
-     * HTTP 400 Bad Request
-     */
     @ExceptionHandler(InvalidResumeFileException.class)
     public ResponseEntity<ErrorResponse> handleInvalidResumeFile(
             InvalidResumeFileException exception,
@@ -161,11 +171,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles multipart requests that do not contain the required file part.
-     *
-     * HTTP 400 Bad Request
-     */
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestPart(
             MissingServletRequestPartException exception,
@@ -177,11 +182,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles resume uploads rejected by Spring's multipart size limit.
-     *
-     * HTTP 413 Payload Too Large
-     */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaximumUploadSize(
             MaxUploadSizeExceededException exception,
@@ -193,12 +193,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles candidates who have not uploaded a resume or whose stored
-     * resume file no longer exists.
-     *
-     * HTTP 404 Not Found
-     */
     @ExceptionHandler(ResumeNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResumeNotFound(
             ResumeNotFoundException exception,
@@ -210,14 +204,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Handles unexpected filesystem problems while storing, loading or
-     * deleting resume files.
-     *
-     * Internal filesystem details are logged but not exposed to clients.
-     *
-     * HTTP 500 Internal Server Error
-     */
     @ExceptionHandler(ResumeStorageException.class)
     public ResponseEntity<ErrorResponse> handleResumeStorageFailure(
             ResumeStorageException exception,
@@ -234,13 +220,6 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Final fallback for unexpected application errors.
-     *
-     * The full exception is logged, while only a safe message is returned.
-     *
-     * HTTP 500 Internal Server Error
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(
             Exception exception,
@@ -257,21 +236,19 @@ public class GlobalExceptionHandler {
                 request);
     }
 
-    /**
-     * Creates the common ErrorResponse format.
-     */
     private ResponseEntity<ErrorResponse> buildErrorResponse(
             HttpStatus status,
             String message,
             HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                status.value(),
-                status.name(),
-                message,
-                request.getRequestURI(),
-                null);
+        ErrorResponse errorResponse =
+                new ErrorResponse(
+                        LocalDateTime.now(),
+                        status.value(),
+                        status.name(),
+                        message,
+                        request.getRequestURI(),
+                        null);
 
         return ResponseEntity
                 .status(status)
