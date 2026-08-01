@@ -1,6 +1,13 @@
 package com.talentbridge.controller;
 
 import org.springframework.http.HttpStatus;
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+
+import com.talentbridge.dto.response.ResumeDownload;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -120,7 +127,49 @@ public class CandidateProfileController {
 
         return ResponseEntity.ok(response);
     }
+    /**
+     * GET /api/v1/candidate/profile/resume
+     *
+     * Downloads the authenticated candidate's resume.
+     */
+    @GetMapping("/resume")
+    public ResponseEntity<Resource> downloadResume(
+            Authentication authentication) {
 
+        String authenticatedEmail =
+                getAuthenticatedEmail(authentication);
+
+        ResumeDownload download =
+                candidateProfileService.downloadResume(
+                        authenticatedEmail);
+
+        ContentDisposition contentDisposition =
+                ContentDisposition
+                        .attachment()
+                        .filename(
+                                download.fileName(),
+                                StandardCharsets.UTF_8)
+                        .build();
+
+        return ResponseEntity
+                .ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        contentDisposition.toString())
+                .header(
+                        HttpHeaders.CACHE_CONTROL,
+                        "no-store")
+                .header(
+                        "X-Content-Type-Options",
+                        "nosniff")
+                .contentType(
+                        MediaType.parseMediaType(
+                                download.contentType()))
+                .contentLength(
+                        download.contentLength())
+                .body(
+                        download.resource());
+    }
     /**
      * Safely extracts the authenticated user's email.
      */

@@ -13,10 +13,12 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.talentbridge.exception.InvalidResumeFileException;
+import com.talentbridge.exception.ResumeNotFoundException;
 import com.talentbridge.exception.ResumeStorageException;
 
 /**
@@ -89,6 +91,9 @@ public class LocalResumeStorageService
 
     /**
      * Validates and stores one resume.
+     *
+     * @param file uploaded resume file
+     * @return original display filename and generated stored filename
      */
     @Override
     public StoredResume store(MultipartFile file) {
@@ -106,17 +111,19 @@ public class LocalResumeStorageService
                             + "."
                             + validatedResume.extension();
 
-            targetPath = resolveStoredPath(storedFileName);
+            targetPath =
+                    resolveStoredPath(storedFileName);
 
             try (InputStream inputStream =
                     file.getInputStream()) {
 
                 /*
                  * REPLACE_EXISTING is intentionally not used.
-                 * Although a UUID collision is extremely unlikely,
-                 * an existing file must never be overwritten silently.
+                 * An existing file must never be overwritten silently.
                  */
-                Files.copy(inputStream, targetPath);
+                Files.copy(
+                        inputStream,
+                        targetPath);
             }
 
             return new StoredResume(
@@ -136,10 +143,62 @@ public class LocalResumeStorageService
     }
 
     /**
-     * Deletes a stored resume when it exists.
+     * Securely loads an existing resume.
+     *
+     * The supplied filename must be an internally generated UUID filename.
+     * Absolute paths and user-controlled paths are rejected.
+     *
+     * @param storedFileName generated internal filename
+     * @return file resource, content type and content length
      */
     @Override
-    public void deleteIfExists(String storedFileName) {
+    public StoredResumeFile load(
+            String storedFileName) {
+
+        Path storedPath =
+                resolveStoredPath(storedFileName);
+
+        if (!Files.exists(storedPath)
+                || !Files.isRegularFile(storedPath)) {
+
+            throw new ResumeNotFoundException(
+                    "Resume file not found");
+        }
+
+        if (!Files.isReadable(storedPath)) {
+            throw new ResumeStorageException(
+                    "Resume file is not readable");
+        }
+
+        try {
+            long contentLength =
+                    Files.size(storedPath);
+
+            FileSystemResource resource =
+                    new FileSystemResource(storedPath);
+
+            return new StoredResumeFile(
+                    resource,
+                    determineContentType(storedFileName),
+                    contentLength);
+
+        } catch (IOException exception) {
+            throw new ResumeStorageException(
+                    "Could not load the resume file",
+                    exception);
+        }
+    }
+
+    /**
+     * Deletes a stored resume when it exists.
+     *
+     * Null and blank filenames are ignored.
+     *
+     * @param storedFileName generated internal filename
+     */
+    @Override
+    public void deleteIfExists(
+            String storedFileName) {
 
         if (storedFileName == null
                 || storedFileName.isBlank()) {
@@ -164,8 +223,7 @@ public class LocalResumeStorageService
     }
 
     /**
-     * Validates the file's size, filename, extension, MIME type and basic
-     * file signature.
+     * Validates size, filename, extension, MIME type and file signature.
      */
     private ValidatedResume validateResume(
             MultipartFile file) throws IOException {
@@ -191,7 +249,8 @@ public class LocalResumeStorageService
         }
 
         String cleanedFileName =
-                validateOriginalFileName(originalFileName);
+                validateOriginalFileName(
+                        originalFileName);
 
         String extension =
                 extractExtension(cleanedFileName);
@@ -237,15 +296,17 @@ public class LocalResumeStorageService
     }
 
     /**
-     * Extracts and validates the file extension.
+     * Extracts and validates the resume extension.
      */
-    private String extractExtension(String fileName) {
+    private String extractExtension(
+            String fileName) {
 
         int lastDotIndex =
                 fileName.lastIndexOf('.');
 
         if (lastDotIndex <= 0
-                || lastDotIndex == fileName.length() - 1) {
+                || lastDotIndex
+                        == fileName.length() - 1) {
 
             throw new InvalidResumeFileException(
                     "Resume must have a valid file extension");
@@ -265,7 +326,7 @@ public class LocalResumeStorageService
     }
 
     /**
-     * Ensures the request MIME type matches the file extension.
+     * Ensures the request MIME type matches the extension.
      */
     private void validateMimeType(
             String extension,
@@ -298,7 +359,7 @@ public class LocalResumeStorageService
     }
 
     /**
-     * Performs a basic document-signature check.
+     * Performs a basic file-signature check.
      */
     private void validateFileSignature(
             String extension,
@@ -309,7 +370,8 @@ public class LocalResumeStorageService
         try (InputStream inputStream =
                 file.getInputStream()) {
 
-            header = inputStream.readNBytes(8);
+            header =
+                    inputStream.readNBytes(8);
         }
 
         boolean validSignature =
@@ -337,7 +399,7 @@ public class LocalResumeStorageService
     }
 
     /**
-     * Resolves a generated filename underneath the configured root.
+     * Resolves a generated filename below the configured storage root.
      */
     private Path resolveStoredPath(
             String storedFileName) {
@@ -365,7 +427,37 @@ public class LocalResumeStorageService
         return resolvedPath;
     }
 
-    private void deletePartiallyWrittenFile(Path targetPath) {
+    /**
+     * Determines the HTTP content type from the validated stored filename.
+     */
+    private String determineContentType(
+            String storedFileName) {
+
+        String normalizedFileName =
+                storedFileName.toLowerCase(Locale.ROOT);
+
+        if (normalizedFileName.endsWith(".pdf")) {
+            return "application/pdf";
+        }
+
+        if (normalizedFileName.endsWith(".doc")) {
+            return "application/msword";
+        }
+
+        if (normalizedFileName.endsWith(".docx")) {
+            return "application/vnd.openxmlformats-officedocument."
+                    + "wordprocessingml.document";
+        }
+
+        throw new InvalidResumeFileException(
+                "Invalid stored resume filename");
+    }
+
+    /**
+     * Removes a partially written file after a storage failure.
+     */
+    private void deletePartiallyWrittenFile(
+            Path targetPath) {
 
         if (targetPath == null) {
             return;
@@ -373,21 +465,29 @@ public class LocalResumeStorageService
 
         try {
             Files.deleteIfExists(targetPath);
+
         } catch (IOException ignored) {
             /*
-             * The original storage exception is more important.
-             * A failed cleanup must not replace it.
+             * Preserve the original storage failure.
+             * Cleanup failure must not replace it.
              */
         }
     }
 
-    private boolean containsControlCharacter(String value) {
+    /**
+     * Checks whether a filename contains an ISO control character.
+     */
+    private boolean containsControlCharacter(
+            String value) {
 
         return value
                 .chars()
                 .anyMatch(Character::isISOControl);
     }
 
+    /**
+     * Checks whether one byte array begins with another byte array.
+     */
     private boolean startsWith(
             byte[] actual,
             byte[] expected) {
@@ -411,7 +511,8 @@ public class LocalResumeStorageService
     /**
      * DOCX files use a ZIP container beginning with a PK signature.
      */
-    private boolean hasZipSignature(byte[] header) {
+    private boolean hasZipSignature(
+            byte[] header) {
 
         if (header.length < 4) {
             return false;
@@ -429,11 +530,12 @@ public class LocalResumeStorageService
                 || (header[2] == (byte) 0x07
                         && header[3] == (byte) 0x08);
 
-        return startsWithPk && validZipMarker;
+        return startsWithPk
+                && validZipMarker;
     }
 
     /**
-     * Internal result created after validation succeeds.
+     * Internal result created after upload validation succeeds.
      */
     private record ValidatedResume(
             String originalFileName,

@@ -1,6 +1,9 @@
 package com.talentbridge.service.impl;
 
 import org.slf4j.Logger;
+import com.talentbridge.dto.response.ResumeDownload;
+import com.talentbridge.exception.ResumeNotFoundException;
+import com.talentbridge.storage.StoredResumeFile;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -193,7 +196,37 @@ public class CandidateProfileServiceImpl
             throw exception;
         }
     }
+    /**
+     * Loads the authenticated candidate's resume for download.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ResumeDownload downloadResume(
+            String authenticatedEmail) {
 
+        User candidate =
+                getActiveCandidate(authenticatedEmail);
+
+        CandidateProfile profile =
+                getCandidateProfile(candidate.getId());
+
+        if (!hasText(profile.getResumeFileName())
+                || !hasText(profile.getResumeFilePath())) {
+
+            throw new ResumeNotFoundException(
+                    "Resume has not been uploaded");
+        }
+
+        StoredResumeFile storedResumeFile =
+                resumeStorageService.load(
+                        profile.getResumeFilePath());
+
+        return new ResumeDownload(
+                storedResumeFile.resource(),
+                profile.getResumeFileName(),
+                storedResumeFile.contentType(),
+                storedResumeFile.contentLength());
+    }
     /**
      * Loads a Candidate Profile using the authenticated user's ID.
      */
