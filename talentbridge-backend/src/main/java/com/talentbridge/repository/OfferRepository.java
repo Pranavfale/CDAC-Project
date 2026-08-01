@@ -24,6 +24,8 @@ public interface OfferRepository
         Long candidateId
     );
 
+    List<Offer> findAllByOrderByCreatedAtDesc();
+
     List<Offer> findAllByCandidateIdOrderByCreatedAtDesc(
         Long candidateId
     );
