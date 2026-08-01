@@ -1,11 +1,11 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Request, status
 
 from app.schemas.request_schemas import GenerateOfferRequest
 from app.schemas.response_schemas import (
     GenerateOfferSuccessResponse,
 )
-from app.services.offer_generation_service import (
-    mock_offer_generation_service,
+from app.services.ai_offer_generation_service import (
+    ai_offer_generation_service,
 )
 
 
@@ -22,12 +22,15 @@ router = APIRouter(
     summary="Generate structured offer content",
 )
 def generate_offer(
-    request: GenerateOfferRequest,
+    payload: GenerateOfferRequest,
+    http_request: Request,
 ) -> GenerateOfferSuccessResponse:
     """
-    Generate structured mock offer-letter content.
+    Generate structured offer content through the configured provider.
 
-    The endpoint is protected by X-AI-Service-Key middleware.
+    This endpoint is protected by X-AI-Service-Key middleware.
     """
 
-    return mock_offer_generation_service.generate(request)
+    http_request.state.ai_request_id = payload.requestId
+
+    return ai_offer_generation_service.generate(payload)
