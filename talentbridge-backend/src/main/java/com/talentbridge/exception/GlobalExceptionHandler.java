@@ -206,4 +206,52 @@ public class GlobalExceptionHandler {
                 .status(status)
                 .body(errorResponse);
     }
+    
+    @ExceptionHandler({
+        OfferNotFoundException.class,
+        ApplicationNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponse>
+        handleOfferResourceNotFound(
+            RuntimeException exception,
+            HttpServletRequest request
+        ) {
+
+        return buildErrorResponse(
+            HttpStatus.NOT_FOUND,
+            exception.getMessage(),
+            request
+        );
+    }
+
+    @ExceptionHandler({
+        DuplicateOfferException.class,
+        ApplicationNotSelectedException.class
+    })
+    public ResponseEntity<ErrorResponse>
+        handleOfferConflict(
+            RuntimeException exception,
+            HttpServletRequest request
+        ) {
+
+        return buildErrorResponse(
+            HttpStatus.CONFLICT,
+            exception.getMessage(),
+            request
+        );
+    }
+
+    @ExceptionHandler(InvalidOfferException.class)
+    public ResponseEntity<ErrorResponse>
+        handleInvalidOffer(
+            InvalidOfferException exception,
+            HttpServletRequest request
+        ) {
+
+        return buildErrorResponse(
+            HttpStatus.BAD_REQUEST,
+            exception.getMessage(),
+            request
+        );
+    }
 }

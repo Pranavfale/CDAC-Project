@@ -1,19 +1,29 @@
 package com.talentbridge.service;
 
 import com.talentbridge.dto.request.CreateOfferRequest;
-import com.talentbridge.dto.request.UpdateOfferStatusRequest;
+import com.talentbridge.dto.request.UpdateOfferRequest;
 import com.talentbridge.dto.response.OfferResponse;
 
 import java.util.List;
 
 public interface OfferService {
 
-	OfferResponse createOffer(CreateOfferRequest request);
+    OfferResponse createDraft(
+        CreateOfferRequest request
+    );
 
-	OfferResponse getOfferByApplicationId(Long applicationId);
+    OfferResponse updateDraft(
+        Long offerId,
+        UpdateOfferRequest request
+    );
 
-	OfferResponse updateOfferStatus(Long offerId, UpdateOfferStatusRequest request);
+    OfferResponse getOfferById(
+        Long offerId
+    );
 
-	List<OfferResponse> getMyOffers();
+    OfferResponse getOfferByApplicationId(
+        Long applicationId
+    );
 
+    List<OfferResponse> getAllOffers();
 }

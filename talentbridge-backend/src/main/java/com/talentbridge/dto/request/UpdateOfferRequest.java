@@ -16,10 +16,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CreateOfferRequest {
-
-    @NotNull(message = "Application ID is required")
-    private Long applicationId;
+public class UpdateOfferRequest {
 
     @NotNull(message = "Offered CTC is required")
     @DecimalMin(
@@ -41,10 +38,7 @@ public class CreateOfferRequest {
     private LocalDate expiryDate;
 
     @NotBlank(message = "Department is required")
-    @Size(
-        max = 150,
-        message = "Department must not exceed 150 characters"
-    )
+    @Size(max = 150)
     private String department;
 
     @NotBlank(message = "Employment type is required")
@@ -55,10 +49,7 @@ public class CreateOfferRequest {
     private String employmentType;
 
     @NotBlank(message = "Work location is required")
-    @Size(
-        max = 255,
-        message = "Work location must not exceed 255 characters"
-    )
+    @Size(max = 255)
     private String workLocation;
 
     @NotBlank(message = "Work mode is required")
@@ -68,29 +59,17 @@ public class CreateOfferRequest {
     )
     private String workMode;
 
-    @Size(
-        max = 50,
-        message = "A maximum of 50 benefits is allowed"
-    )
+    @Size(max = 50)
     private List<
-        @NotBlank(message = "Benefit cannot be blank")
-        @Size(
-            max = 500,
-            message = "Benefit must not exceed 500 characters"
-        )
+        @NotBlank
+        @Size(max = 500)
         String
     > benefits = new ArrayList<>();
 
-    @Size(
-        max = 50,
-        message = "A maximum of 50 additional terms is allowed"
-    )
+    @Size(max = 50)
     private List<
-        @NotBlank(message = "Additional term cannot be blank")
-        @Size(
-            max = 2000,
-            message = "Additional term must not exceed 2000 characters"
-        )
+        @NotBlank
+        @Size(max = 2000)
         String
     > additionalTerms = new ArrayList<>();
 }

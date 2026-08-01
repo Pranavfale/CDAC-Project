@@ -1,54 +1,86 @@
 package com.talentbridge.controller;
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.talentbridge.dto.request.CreateOfferRequest;
-import com.talentbridge.dto.request.UpdateOfferStatusRequest;
+import com.talentbridge.dto.request.UpdateOfferRequest;
 import com.talentbridge.dto.response.OfferResponse;
 import com.talentbridge.service.OfferService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/offers")
+@RequestMapping("/api/v1/hr/offers")
 public class OfferController {
 
-	private final OfferService offerService;
+    private final OfferService offerService;
 
-	public OfferController(OfferService offerService) {
-		this.offerService = offerService;
-	}
+    public OfferController(
+        OfferService offerService
+    ) {
+        this.offerService = offerService;
+    }
 
-	@PostMapping
-	public ResponseEntity<OfferResponse> createOffer(@RequestBody CreateOfferRequest request) {
+    @PostMapping
+    public ResponseEntity<OfferResponse> createDraft(
+        @Valid
+        @RequestBody
+        CreateOfferRequest request
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(
+                offerService.createDraft(request)
+            );
+    }
 
-		return ResponseEntity.ok(offerService.createOffer(request));
-	}
+    @PutMapping("/{offerId}")
+    public ResponseEntity<OfferResponse> updateDraft(
+        @PathVariable Long offerId,
+        @Valid
+        @RequestBody
+        UpdateOfferRequest request
+    ) {
+        return ResponseEntity.ok(
+            offerService.updateDraft(
+                offerId,
+                request
+            )
+        );
+    }
 
-	@GetMapping("/application/{applicationId}")
-	public ResponseEntity<OfferResponse> getOfferByApplication(@PathVariable Long applicationId) {
+    @GetMapping("/{offerId}")
+    public ResponseEntity<OfferResponse> getOffer(
+        @PathVariable Long offerId
+    ) {
+        return ResponseEntity.ok(
+            offerService.getOfferById(offerId)
+        );
+    }
 
-		return ResponseEntity.ok(offerService.getOfferByApplicationId(applicationId));
-	}
+    @GetMapping(
+        "/application/{applicationId}"
+    )
+    public ResponseEntity<OfferResponse>
+        getOfferByApplication(
+            @PathVariable Long applicationId
+        ) {
 
-	@PutMapping("/{offerId}/status")
-	public ResponseEntity<OfferResponse> updateOfferStatus(@PathVariable Long offerId,
-			@RequestBody UpdateOfferStatusRequest request) {
+        return ResponseEntity.ok(
+            offerService.getOfferByApplicationId(
+                applicationId
+            )
+        );
+    }
 
-		return ResponseEntity.ok(offerService.updateOfferStatus(offerId, request));
-	}
+    @GetMapping
+    public ResponseEntity<List<OfferResponse>>
+        getAllOffers() {
 
-	@GetMapping("/my")
-	public ResponseEntity<List<OfferResponse>> getMyOffers() {
-
-		return ResponseEntity.ok(offerService.getMyOffers());
-	}
-
+        return ResponseEntity.ok(
+            offerService.getAllOffers()
+        );
+    }
 }
