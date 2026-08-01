@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -8,7 +8,7 @@ from app.schemas.offer_document_schema import OfferDocumentContent
 
 class ApiResponseModel(BaseModel):
     """
-    Base class for responses returned by the AI service.
+    Base model for responses returned by the TalentBridge AI service.
     """
 
     model_config = ConfigDict(
@@ -19,7 +19,7 @@ class ApiResponseModel(BaseModel):
 
 class HealthResponse(ApiResponseModel):
     """
-    Structured response returned by the AI service health endpoint.
+    Response returned by the AI-service health endpoint.
     """
 
     service: str = Field(
@@ -38,7 +38,7 @@ class HealthResponse(ApiResponseModel):
     )
 
     providerConfigured: bool = Field(
-        description="Whether an AI provider key is configured.",
+        description="Whether an AI-provider API key is configured.",
     )
 
     timestamp: datetime = Field(
@@ -48,7 +48,7 @@ class HealthResponse(ApiResponseModel):
 
 class GenerateOfferSuccessResponse(ApiResponseModel):
     """
-    Successful structured response returned by offer generation.
+    Successful response returned by the offer-generation endpoint.
     """
 
     requestId: str = Field(
@@ -57,12 +57,12 @@ class GenerateOfferSuccessResponse(ApiResponseModel):
     )
 
     status: Literal["SUCCESS"] = Field(
-        description="Successful AI generation status.",
+        description="Successful AI-generation status.",
     )
 
     provider: str = Field(
         min_length=1,
-        description="Configured AI provider.",
+        description="AI provider used for generation.",
     )
 
     modelName: str = Field(
@@ -75,18 +75,20 @@ class GenerateOfferSuccessResponse(ApiResponseModel):
         description="Controlled prompt version used for generation.",
     )
 
-    content: OfferDocumentContent
+    content: OfferDocumentContent = Field(
+        description="Validated structured offer-document content.",
+    )
 
     missingFields: list[str] = Field(
         default_factory=list,
         description=(
             "Required business fields that were unavailable. "
-            "The AI must not guess these values."
+            "The AI service must not guess these values."
         ),
     )
 
     receivedAt: datetime = Field(
-        description="Date and time when the response was produced.",
+        description="Time when the generation response was created.",
     )
 
 
@@ -111,7 +113,7 @@ class AiErrorResponse(ApiResponseModel):
 
     message: str = Field(
         min_length=1,
-        description="Safe user-readable error message.",
+        description="Safe error message.",
     )
 
     missingFields: list[str] = Field(
@@ -122,4 +124,57 @@ class AiErrorResponse(ApiResponseModel):
     retryable: bool = Field(
         default=False,
         description="Whether Spring Boot may retry the operation.",
+    )
+
+
+class RewriteProviderContent(ApiResponseModel):
+    """
+    JSON content expected directly from the AI provider
+    for a section-rewrite operation.
+    """
+
+    rewrittenContent: str = Field(
+        min_length=1,
+        max_length=10000,
+        description="Rewritten content for the requested section.",
+    )
+
+
+class RewriteOfferSuccessResponse(ApiResponseModel):
+    """
+    Successful response returned by the offer-rewrite endpoint.
+    """
+
+    requestId: str = Field(
+        min_length=1,
+        description="Rewrite request identifier.",
+    )
+
+    status: Literal["SUCCESS"] = Field(
+        description="Successful rewrite status.",
+    )
+
+    provider: str = Field(
+        min_length=1,
+        description="AI provider used for rewriting.",
+    )
+
+    modelName: str = Field(
+        min_length=1,
+        description="Provider model used for rewriting.",
+    )
+
+    section: str = Field(
+        min_length=1,
+        description="Offer-document section that was rewritten.",
+    )
+
+    rewrittenContent: str = Field(
+        min_length=1,
+        max_length=10000,
+        description="Validated rewritten section content.",
+    )
+
+    receivedAt: datetime = Field(
+        description="Time when the rewrite response was created.",
     )

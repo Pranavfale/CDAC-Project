@@ -4,7 +4,11 @@ from typing import Literal, TypedDict
 from app.prompts.offer_system_prompt import (
     get_offer_system_prompt,
 )
-from app.schemas.request_schemas import GenerateOfferRequest
+from app.prompts.rewrite_prompt import REWRITE_SYSTEM_PROMPT
+from app.schemas.request_schemas import (
+    GenerateOfferRequest,
+    RewriteOfferRequest,
+)
 
 
 class PromptMessage(TypedDict):
@@ -26,11 +30,11 @@ class PromptService:
         request: GenerateOfferRequest,
     ) -> dict:
         """
-        Build the minimum business data required for generation.
+        Build the minimum verified facts required for complete
+        offer generation.
 
-        Candidate email, request ID, and correlation ID are deliberately
-        excluded because the provider does not need them to draft the
-        offer letter.
+        Candidate email, request ID, and correlation ID are excluded
+        because the external AI provider does not need them.
         """
 
         return {
@@ -70,7 +74,8 @@ class PromptService:
         request: GenerateOfferRequest,
     ) -> list[PromptMessage]:
         """
-        Build the system and user messages for complete generation.
+        Build controlled system and user messages for complete
+        offer-letter generation.
         """
 
         system_prompt = get_offer_system_prompt(
@@ -99,6 +104,62 @@ class PromptService:
             {
                 "role": "system",
                 "content": system_prompt,
+            },
+            {
+                "role": "user",
+                "content": user_message,
+            },
+        ]
+
+    @staticmethod
+    def build_rewrite_facts(
+        request: RewriteOfferRequest,
+    ) -> dict[str, str]:
+        """
+        Build the minimum verified facts required for rewriting
+        one offer-document section.
+        """
+
+        return {
+            "candidateName": request.facts.candidateName,
+            "position": request.facts.position,
+            "companyName": request.facts.companyName,
+        }
+
+    def build_rewrite_messages(
+        self,
+        request: RewriteOfferRequest,
+    ) -> list[PromptMessage]:
+        """
+        Build controlled system and user messages for rewriting
+        one offer-document section.
+        """
+
+        rewrite_facts = self.build_rewrite_facts(request)
+
+        facts_json = json.dumps(
+            rewrite_facts,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+        user_message = (
+            f"SECTION_TO_REWRITE: {request.section}\n\n"
+            "CURRENT_CONTENT_START\n"
+            f"{request.currentContent}\n"
+            "CURRENT_CONTENT_END\n\n"
+            "HR_INSTRUCTION_START\n"
+            f"{request.instruction}\n"
+            "HR_INSTRUCTION_END\n\n"
+            "VERIFIED_FACTS_JSON_START\n"
+            f"{facts_json}\n"
+            "VERIFIED_FACTS_JSON_END"
+        )
+
+        return [
+            {
+                "role": "system",
+                "content": REWRITE_SYSTEM_PROMPT,
             },
             {
                 "role": "user",
