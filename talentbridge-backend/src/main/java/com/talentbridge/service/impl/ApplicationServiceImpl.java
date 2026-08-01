@@ -21,6 +21,7 @@ import com.talentbridge.enums.ApplicationStatus;
 import com.talentbridge.enums.Role;
 import com.talentbridge.enums.VacancyStatus;
 import com.talentbridge.exception.ApplicationNotFoundException;
+import com.talentbridge.exception.ApplicationWithdrawalNotAllowedException;
 import com.talentbridge.exception.CandidateProfileNotFoundException;
 import com.talentbridge.exception.DuplicateApplicationException;
 import com.talentbridge.exception.ResumeNotFoundException;
@@ -54,7 +55,8 @@ public class ApplicationServiceImpl
         this.applicationRepository = applicationRepository;
         this.vacancyRepository = vacancyRepository;
         this.userRepository = userRepository;
-        this.candidateProfileRepository = candidateProfileRepository;
+        this.candidateProfileRepository =
+                candidateProfileRepository;
     }
 
     /**
@@ -65,7 +67,9 @@ public class ApplicationServiceImpl
             String authenticatedEmail,
             CreateApplicationRequest request) {
 
-        if (request == null || request.getVacancyId() == null) {
+        if (request == null
+                || request.getVacancyId() == null) {
+
             throw new IllegalArgumentException(
                     "Vacancy ID is required");
         }
@@ -97,7 +101,8 @@ public class ApplicationServiceImpl
                                         "Create your candidate profile before applying"));
 
         if (!hasText(candidateProfile.getResumeFilePath())
-                || !hasText(candidateProfile.getResumeFileName())) {
+                || !hasText(
+                        candidateProfile.getResumeFileName())) {
 
             throw new ResumeNotFoundException(
                     "Upload a resume before applying to a vacancy");
@@ -108,7 +113,8 @@ public class ApplicationServiceImpl
                         .candidate(candidate)
                         .vacancy(vacancy)
                         .resumeFilePath(
-                                candidateProfile.getResumeFilePath())
+                                candidateProfile
+                                        .getResumeFilePath())
                         .coverLetter(
                                 normalizeCoverLetter(
                                         request.getCoverLetter()))
@@ -117,15 +123,16 @@ public class ApplicationServiceImpl
 
         try {
             Application savedApplication =
-                    applicationRepository.saveAndFlush(application);
+                    applicationRepository
+                            .saveAndFlush(application);
 
             return mapToResponse(savedApplication);
 
         } catch (DataIntegrityViolationException exception) {
 
             /*
-             * The unique database constraint protects against two
-             * simultaneous requests passing the first duplicate check.
+             * The database unique constraint protects against two
+             * simultaneous requests that pass the first duplicate check.
              */
             throw new DuplicateApplicationException(
                     "You have already applied to this vacancy");
@@ -152,6 +159,60 @@ public class ApplicationServiceImpl
     }
 
     /**
+     * Returns one application only when it belongs to the authenticated
+     * candidate.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ApplicationResponse getCandidateApplication(
+            String authenticatedEmail,
+            Long applicationId) {
+
+        User candidate =
+                getActiveCandidate(authenticatedEmail);
+
+        Application application =
+                getCandidateOwnedApplication(
+                        applicationId,
+                        candidate.getId());
+
+        return mapToResponse(application);
+    }
+
+    /**
+     * Withdraws an application belonging to the authenticated candidate.
+     */
+    @Override
+    public ApplicationResponse withdrawApplication(
+            String authenticatedEmail,
+            Long applicationId) {
+
+        User candidate =
+                getActiveCandidate(authenticatedEmail);
+
+        Application application =
+                getCandidateOwnedApplication(
+                        applicationId,
+                        candidate.getId());
+
+        validateWithdrawalAllowed(
+                application.getStatus());
+
+        application.setStatus(
+                ApplicationStatus.WITHDRAWN);
+
+        /*
+         * saveAndFlush ensures @PreUpdate updates updatedDate before the
+         * response DTO is created.
+         */
+        Application savedApplication =
+                applicationRepository
+                        .saveAndFlush(application);
+
+        return mapToResponse(savedApplication);
+    }
+
+    /**
      * Returns applications submitted for one vacancy.
      */
     @Override
@@ -162,7 +223,8 @@ public class ApplicationServiceImpl
         getVacancy(vacancyId);
 
         return applicationRepository
-                .findByVacancy_IdOrderByAppliedDateDesc(vacancyId)
+                .findByVacancy_IdOrderByAppliedDateDesc(
+                        vacancyId)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
@@ -176,12 +238,11 @@ public class ApplicationServiceImpl
             Long applicationId,
             UpdateApplicationStatusRequest request) {
 
-        if (applicationId == null || applicationId <= 0) {
-            throw new IllegalArgumentException(
-                    "Valid application ID is required");
-        }
+        validateApplicationId(applicationId);
 
-        if (request == null || request.getStatus() == null) {
+        if (request == null
+                || request.getStatus() == null) {
+
             throw new IllegalArgumentException(
                     "Application status is required");
         }
@@ -193,9 +254,70 @@ public class ApplicationServiceImpl
                                 new ApplicationNotFoundException(
                                         "Application not found"));
 
-        application.setStatus(request.getStatus());
+        application.setStatus(
+                request.getStatus());
 
         applicationRepository.save(application);
+    }
+
+    /**
+     * Loads an application only when it belongs to the supplied candidate.
+     *
+     * Returning the same not-found response for missing and unowned
+     * applications prevents disclosure of another candidate's application.
+     */
+    private Application getCandidateOwnedApplication(
+            Long applicationId,
+            Long candidateId) {
+
+        validateApplicationId(applicationId);
+
+        return applicationRepository
+                .findByIdAndCandidate_Id(
+                        applicationId,
+                        candidateId)
+                .orElseThrow(() ->
+                        new ApplicationNotFoundException(
+                                "Application not found"));
+    }
+
+    /**
+     * Validates whether the current application status may move to
+     * WITHDRAWN.
+     *
+     * WITHDRAWN and REJECTED are terminal states.
+     * HIRED applications cannot be withdrawn.
+     */
+    private void validateWithdrawalAllowed(
+            ApplicationStatus currentStatus) {
+
+        if (currentStatus == null) {
+            throw new ApplicationWithdrawalNotAllowedException(
+                    "Application status is unavailable");
+        }
+
+        switch (currentStatus) {
+
+            case WITHDRAWN ->
+                throw new ApplicationWithdrawalNotAllowedException(
+                        "Application is already withdrawn");
+
+            case HIRED ->
+                throw new ApplicationWithdrawalNotAllowedException(
+                        "A hired application cannot be withdrawn");
+
+            case REJECTED ->
+                throw new ApplicationWithdrawalNotAllowedException(
+                        "A rejected application cannot be withdrawn");
+
+            default -> {
+                /*
+                 * APPLIED, UNDER_REVIEW, SHORTLISTED,
+                 * INTERVIEW_SCHEDULED, SELECTED and OFFERED may move
+                 * to WITHDRAWN.
+                 */
+            }
+        }
     }
 
     /**
@@ -221,7 +343,7 @@ public class ApplicationServiceImpl
 
         if (user.getRole() != Role.CANDIDATE) {
             throw new AccessDeniedException(
-                    "Only candidates can submit job applications");
+                    "Only candidates can manage candidate applications");
         }
 
         return user;
@@ -230,7 +352,8 @@ public class ApplicationServiceImpl
     /**
      * Loads one vacancy.
      */
-    private Vacancy getVacancy(Long vacancyId) {
+    private Vacancy getVacancy(
+            Long vacancyId) {
 
         if (vacancyId == null || vacancyId <= 0) {
             throw new IllegalArgumentException(
@@ -245,12 +368,14 @@ public class ApplicationServiceImpl
     }
 
     /**
-     * Checks that the vacancy is currently accepting applications.
+     * Checks that the vacancy is accepting applications.
      */
     private void validateVacancyAvailability(
             Vacancy vacancy) {
 
-        if (vacancy.getStatus() != VacancyStatus.OPEN) {
+        if (vacancy.getStatus()
+                != VacancyStatus.OPEN) {
+
             throw new VacancyNotAvailableException(
                     "Vacancy is not open for applications");
         }
@@ -276,6 +401,20 @@ public class ApplicationServiceImpl
     }
 
     /**
+     * Validates an application path-variable value.
+     */
+    private void validateApplicationId(
+            Long applicationId) {
+
+        if (applicationId == null
+                || applicationId <= 0) {
+
+            throw new IllegalArgumentException(
+                    "Valid application ID is required");
+        }
+    }
+
+    /**
      * Validates the authentication identity.
      */
     private String normalizeEmail(
@@ -297,7 +436,9 @@ public class ApplicationServiceImpl
     private String normalizeCoverLetter(
             String coverLetter) {
 
-        if (coverLetter == null || coverLetter.isBlank()) {
+        if (coverLetter == null
+                || coverLetter.isBlank()) {
+
             return null;
         }
 
@@ -342,14 +483,21 @@ public class ApplicationServiceImpl
                         vacancy != null
                                 ? vacancy.getEmploymentType()
                                 : null)
-                .coverLetter(application.getCoverLetter())
-                .status(application.getStatus())
-                .appliedDate(application.getAppliedDate())
-                .updatedDate(application.getUpdatedDate())
+                .coverLetter(
+                        application.getCoverLetter())
+                .status(
+                        application.getStatus())
+                .appliedDate(
+                        application.getAppliedDate())
+                .updatedDate(
+                        application.getUpdatedDate())
                 .build();
     }
 
-    private boolean hasText(String value) {
-        return value != null && !value.isBlank();
+    private boolean hasText(
+            String value) {
+
+        return value != null
+                && !value.isBlank();
     }
 }

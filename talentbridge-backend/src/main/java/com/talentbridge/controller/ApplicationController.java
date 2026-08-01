@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -46,7 +47,8 @@ public class ApplicationController {
     @PreAuthorize("hasRole('CANDIDATE')")
     public ResponseEntity<ApplicationResponse> applyToVacancy(
             Authentication authentication,
-            @Valid @RequestBody CreateApplicationRequest request) {
+            @Valid @RequestBody
+            CreateApplicationRequest request) {
 
         String authenticatedEmail =
                 getAuthenticatedEmail(authentication);
@@ -76,8 +78,62 @@ public class ApplicationController {
                 getAuthenticatedEmail(authentication);
 
         return ResponseEntity.ok(
-                applicationService.getCandidateApplications(
-                        authenticatedEmail));
+                applicationService
+                        .getCandidateApplications(
+                                authenticatedEmail));
+    }
+
+    /**
+     * GET /api/v1/candidate/applications/{applicationId}
+     *
+     * Returns one application only when it belongs to the authenticated
+     * candidate.
+     */
+    @GetMapping(
+        "/candidate/applications/{applicationId}"
+    )
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<ApplicationResponse>
+            getCandidateApplication(
+                    Authentication authentication,
+                    @PathVariable Long applicationId) {
+
+        String authenticatedEmail =
+                getAuthenticatedEmail(authentication);
+
+        ApplicationResponse response =
+                applicationService
+                        .getCandidateApplication(
+                                authenticatedEmail,
+                                applicationId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * PATCH /api/v1/candidate/applications/{applicationId}/withdraw
+     *
+     * Withdraws an application only when it belongs to the authenticated
+     * candidate.
+     */
+    @PatchMapping(
+        "/candidate/applications/{applicationId}/withdraw"
+    )
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<ApplicationResponse>
+            withdrawApplication(
+                    Authentication authentication,
+                    @PathVariable Long applicationId) {
+
+        String authenticatedEmail =
+                getAuthenticatedEmail(authentication);
+
+        ApplicationResponse response =
+                applicationService.withdrawApplication(
+                        authenticatedEmail,
+                        applicationId);
+
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -85,15 +141,18 @@ public class ApplicationController {
      *
      * Returns applications submitted for one vacancy.
      */
-    @GetMapping("/hr/applications/vacancy/{vacancyId}")
+    @GetMapping(
+        "/hr/applications/vacancy/{vacancyId}"
+    )
     @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
     public ResponseEntity<List<ApplicationResponse>>
             getVacancyApplications(
                     @PathVariable Long vacancyId) {
 
         return ResponseEntity.ok(
-                applicationService.getVacancyApplications(
-                        vacancyId));
+                applicationService
+                        .getVacancyApplications(
+                                vacancyId));
     }
 
     /**
@@ -101,11 +160,14 @@ public class ApplicationController {
      *
      * Updates an application's recruitment status.
      */
-    @PutMapping("/hr/applications/{applicationId}/status")
+    @PutMapping(
+        "/hr/applications/{applicationId}/status"
+    )
     @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
     public ResponseEntity<Void> updateApplicationStatus(
             @PathVariable Long applicationId,
-            @RequestBody UpdateApplicationStatusRequest request) {
+            @RequestBody
+            UpdateApplicationStatusRequest request) {
 
         applicationService.updateApplicationStatus(
                 applicationId,
