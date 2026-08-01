@@ -1,6 +1,7 @@
 package com.talentbridge.controller;
 
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import com.talentbridge.dto.request.LoginRequest;
@@ -20,13 +21,13 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<AuthenticationResponse> register(@RequestBody RegistrationRequest request) {
+	public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegistrationRequest request) {
 
 		return ResponseEntity.ok(authService.register(request));
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest request) {
+	public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody LoginRequest request) {
 
 		return ResponseEntity.ok(authService.login(request));
 	}
