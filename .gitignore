@@ -44,10 +44,17 @@ obj/
 .vs/
 
 # Uploads and generated files
-uploads/
-storage/
-resumes/
-offer-pdfs/
+# Root-level runtime directories
+/uploads/
+/storage/
+/resumes/
+/offer-pdfs/
+
+# Backend runtime directories
+/talentbridge-backend/uploads/
+/talentbridge-backend/storage/
+/talentbridge-backend/resumes/
+/talentbridge-backend/offer-pdfs/
 
 # Logs
 logs/
