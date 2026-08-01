@@ -52,17 +52,32 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public AuthenticationResponse login(LoginRequest request) {
 
+		System.out.println("====== LOGIN START ======");
+		System.out.println("EMAIL RECEIVED = " + request.getEmail());
+		System.out.println("PASSWORD RECEIVED = " + request.getPassword());
+
 		User user = userRepository.findByEmail(request.getEmail())
 				.orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+		System.out.println("USER FOUND = " + user.getEmail());
+		System.out.println("DB PASSWORD = " + user.getPassword());
+		System.out.println("ACTIVE = " + user.isActive());
+		System.out.println("ROLE = " + user.getRole());
 
+		boolean match = passwordEncoder.matches(request.getPassword(), user.getPassword());
+
+		System.out.println("PASSWORD MATCH = " + match);
+
+		if (!match) {
 			throw new RuntimeException("Invalid email or password");
 		}
-		if (!user.isActive()) {
 
+		if (!user.isActive()) {
+			System.out.println("USER IS INACTIVE");
 			throw new InactiveUserException("User account is inactive");
 		}
+
+		System.out.println("LOGIN SUCCESS");
 
 		return new AuthenticationResponse(jwtService.generateToken(user.getEmail()), user.getEmail(), user.getRole());
 	}
