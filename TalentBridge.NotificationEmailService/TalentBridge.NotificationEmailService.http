@@ -1,0 +1,6 @@
+@TalentBridge.NotificationEmailService_HostAddress = http://localhost:5133
+
+GET {{TalentBridge.NotificationEmailService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
