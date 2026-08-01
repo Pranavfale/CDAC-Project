@@ -11,6 +11,7 @@ import com.talentbridge.enums.Role;
 import com.talentbridge.repository.UserRepository;
 import com.talentbridge.security.JwtService;
 import com.talentbridge.service.AuthService;
+import com.talentbridge.exception.InactiveUserException;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -57,6 +58,10 @@ public class AuthServiceImpl implements AuthService {
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 
 			throw new RuntimeException("Invalid email or password");
+		}
+		if (!user.isActive()) {
+
+			throw new InactiveUserException("User account is inactive");
 		}
 
 		return new AuthenticationResponse(jwtService.generateToken(user.getEmail()), user.getEmail(), user.getRole());
