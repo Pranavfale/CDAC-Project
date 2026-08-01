@@ -1,5 +1,7 @@
 package com.talentbridge.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.talentbridge.dto.request.CandidateProfileRequest;
 import com.talentbridge.dto.response.CandidateProfileResponse;
 
@@ -17,19 +19,16 @@ public interface CandidateProfileService {
      * Returns the profile belonging to the authenticated candidate.
      *
      * @param authenticatedEmail email obtained from Spring Security
-     * @return the authenticated candidate's safe profile response
+     * @return authenticated candidate's profile
      */
     CandidateProfileResponse getProfile(String authenticatedEmail);
 
     /**
      * Creates one profile for the authenticated candidate.
      *
-     * The implementation must reject the request when a profile already
-     * exists for the candidate.
-     *
      * @param authenticatedEmail email obtained from Spring Security
      * @param request candidate-editable profile data
-     * @return the newly created profile
+     * @return newly created profile
      */
     CandidateProfileResponse createProfile(
             String authenticatedEmail,
@@ -38,14 +37,26 @@ public interface CandidateProfileService {
     /**
      * Updates the existing profile belonging to the authenticated candidate.
      *
-     * The implementation must not change the owning user, profile ID,
-     * resume storage path, or timestamps based on frontend input.
-     *
      * @param authenticatedEmail email obtained from Spring Security
      * @param request candidate-editable profile data
-     * @return the updated profile
+     * @return updated profile
      */
     CandidateProfileResponse updateProfile(
             String authenticatedEmail,
             CandidateProfileRequest request);
+
+    /**
+     * Uploads or replaces the authenticated candidate's resume.
+     *
+     * The implementation validates and stores the file, updates the profile's
+     * resume metadata, recalculates profile completion and removes the
+     * previous stored file only after the database transaction succeeds.
+     *
+     * @param authenticatedEmail email obtained from Spring Security
+     * @param file uploaded resume
+     * @return profile containing updated resume information
+     */
+    CandidateProfileResponse uploadResume(
+            String authenticatedEmail,
+            MultipartFile file);
 }

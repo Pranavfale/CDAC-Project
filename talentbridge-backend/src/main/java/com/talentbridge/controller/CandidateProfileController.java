@@ -1,6 +1,7 @@
 package com.talentbridge.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.talentbridge.dto.request.CandidateProfileRequest;
 import com.talentbridge.dto.response.CandidateProfileResponse;
@@ -38,8 +41,6 @@ public class CandidateProfileController {
     }
 
     /**
-     * Returns the authenticated candidate's profile.
-     *
      * GET /api/v1/candidate/profile
      */
     @GetMapping
@@ -57,8 +58,6 @@ public class CandidateProfileController {
     }
 
     /**
-     * Creates one profile for the authenticated candidate.
-     *
      * POST /api/v1/candidate/profile
      */
     @PostMapping
@@ -80,8 +79,6 @@ public class CandidateProfileController {
     }
 
     /**
-     * Updates the authenticated candidate's existing profile.
-     *
      * PUT /api/v1/candidate/profile
      */
     @PutMapping
@@ -96,6 +93,30 @@ public class CandidateProfileController {
                 candidateProfileService.updateProfile(
                         authenticatedEmail,
                         request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * POST /api/v1/candidate/profile/resume
+     *
+     * The multipart request must contain a file part named "file".
+     */
+    @PostMapping(
+        value = "/resume",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<CandidateProfileResponse> uploadResume(
+            Authentication authentication,
+            @RequestPart("file") MultipartFile file) {
+
+        String authenticatedEmail =
+                getAuthenticatedEmail(authentication);
+
+        CandidateProfileResponse response =
+                candidateProfileService.uploadResume(
+                        authenticatedEmail,
+                        file);
 
         return ResponseEntity.ok(response);
     }
