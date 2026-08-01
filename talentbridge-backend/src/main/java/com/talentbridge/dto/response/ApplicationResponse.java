@@ -1,11 +1,17 @@
 package com.talentbridge.dto.response;
 
+import java.time.LocalDateTime;
+
 import com.talentbridge.enums.ApplicationStatus;
+
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
+/**
+ * Safe response returned for candidate application operations.
+ *
+ * Internal resume paths and HR notes are intentionally excluded.
+ */
 @Getter
 @Builder
 public class ApplicationResponse {
@@ -20,8 +26,15 @@ public class ApplicationResponse {
 
     private String vacancyTitle;
 
+    private String vacancyLocation;
+
+    private String employmentType;
+
+    private String coverLetter;
+
     private ApplicationStatus status;
 
     private LocalDateTime appliedDate;
 
+    private LocalDateTime updatedDate;
 }
