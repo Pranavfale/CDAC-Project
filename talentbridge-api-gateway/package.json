@@ -1,0 +1,24 @@
+{
+  "name": "talentbridge-api-gateway",
+  "version": "1.0.0",
+  "description": "TalentBridge API Gateway",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.6.1",
+    "http-proxy-middleware": "^4.2.0",
+    "morgan": "^1.11.0",
+    "nodemon": "^3.1.14",
+    "uuid": "^14.0.1"
+  }
+}
