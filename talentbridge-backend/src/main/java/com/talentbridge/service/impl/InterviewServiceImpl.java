@@ -16,107 +16,63 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 @RequiredArgsConstructor
 public class InterviewServiceImpl implements InterviewService {
 
+	private final InterviewRepository interviewRepository;
 
-    private final InterviewRepository interviewRepository;
+	private final ApplicationRepository applicationRepository;
 
-    private final ApplicationRepository applicationRepository;
+	@Override
+	public InterviewResponse scheduleInterview(ScheduleInterviewRequest request) {
 
+		Application application = applicationRepository.findById(request.getApplicationId())
+				.orElseThrow(() -> new RuntimeException("Application not found"));
 
-    @Override
-    public InterviewResponse scheduleInterview(
-            ScheduleInterviewRequest request) {
+		Interview interview = Interview.builder().application(application).interviewDate(request.getInterviewDate())
+				.interviewTime(request.getInterviewTime()).mode(request.getMode()).location(request.getLocation())
+				.status(InterviewStatus.SCHEDULED).createdAt(LocalDateTime.now()).build();
 
+		return mapToResponse(interviewRepository.save(interview));
+	}
 
-        Application application =
-                applicationRepository.findById(request.getApplicationId())
-                        .orElseThrow(() ->
-                                new RuntimeException("Application not found")
-                        );
+	@Override
+	public List<InterviewResponse> getApplicationInterview(Long applicationId, String email) {
 
+		Application application = applicationRepository.findById(applicationId)
+				.orElseThrow(() -> new RuntimeException("Application not found"));
 
-        Interview interview = Interview.builder()
-                .application(application)
-                .interviewDate(request.getInterviewDate())
-                .interviewTime(request.getInterviewTime())
-                .mode(request.getMode())
-                .location(request.getLocation())
-                .status(InterviewStatus.SCHEDULED)
-                .createdAt(LocalDateTime.now())
-                .build();
+		if (!application.getCandidate().getEmail().equals(email)) {
 
+			throw new AccessDeniedException("You are not allowed to view this interview");
+		}
 
-        return mapToResponse(
-                interviewRepository.save(interview)
-        );
-    }
+		return interviewRepository.findByApplicationId(applicationId).stream().map(this::mapToResponse).toList();
+	}
 
+	@Override
+	public void updateInterviewStatus(Long interviewId, UpdateInterviewStatusRequest request) {
 
-    @Override
-    public List<InterviewResponse> getApplicationInterview(
-            Long applicationId) {
+		Interview interview = interviewRepository.findById(interviewId)
+				.orElseThrow(() -> new RuntimeException("Interview not found"));
 
-        return interviewRepository.findByApplicationId(applicationId)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
+		interview.setStatus(request.getStatus());
 
+		interviewRepository.save(interview);
+	}
 
-    @Override
-    public void updateInterviewStatus(
-            Long interviewId,
-            UpdateInterviewStatusRequest request) {
+	private InterviewResponse mapToResponse(Interview interview) {
 
-
-        Interview interview =
-                interviewRepository.findById(interviewId)
-                        .orElseThrow(() ->
-                                new RuntimeException("Interview not found")
-                        );
-
-
-        interview.setStatus(request.getStatus());
-
-        interviewRepository.save(interview);
-    }
-
-
-    private InterviewResponse mapToResponse(
-            Interview interview) {
-
-
-        return InterviewResponse.builder()
-                .id(interview.getId())
-                .applicationId(
-                        interview.getApplication().getId()
-                )
-                .candidateId(
-                        interview.getApplication()
-                                .getCandidate()
-                                .getId()
-                )
-                .candidateName(
-                        interview.getApplication()
-                                .getCandidate()
-                                .getFullName()
-                )
-                .vacancyTitle(
-                        interview.getApplication()
-                                .getVacancy()
-                                .getTitle()
-                )
-                .interviewDate(interview.getInterviewDate())
-                .interviewTime(interview.getInterviewTime())
-                .mode(interview.getMode())
-                .location(interview.getLocation())
-                .status(interview.getStatus())
-                .createdAt(interview.getCreatedAt())
-                .build();
-    }
+		return InterviewResponse.builder().id(interview.getId()).applicationId(interview.getApplication().getId())
+				.candidateId(interview.getApplication().getCandidate().getId())
+				.candidateName(interview.getApplication().getCandidate().getFullName())
+				.vacancyTitle(interview.getApplication().getVacancy().getTitle())
+				.interviewDate(interview.getInterviewDate()).interviewTime(interview.getInterviewTime())
+				.mode(interview.getMode()).location(interview.getLocation()).status(interview.getStatus())
+				.createdAt(interview.getCreatedAt()).build();
+	}
 
 }

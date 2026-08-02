@@ -8,20 +8,10 @@ import java.util.List;
 
 public interface InterviewService {
 
+	InterviewResponse scheduleInterview(ScheduleInterviewRequest request);
 
-    InterviewResponse scheduleInterview(
-            ScheduleInterviewRequest request
-    );
+	List<InterviewResponse> getApplicationInterview(Long applicationId, String email);
 
-
-    List<InterviewResponse> getApplicationInterview(
-            Long applicationId
-    );
-
-
-    void updateInterviewStatus(
-            Long interviewId,
-            UpdateInterviewStatusRequest request
-    );
+	void updateInterviewStatus(Long interviewId, UpdateInterviewStatusRequest request);
 
 }
