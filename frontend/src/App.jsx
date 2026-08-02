@@ -19,6 +19,7 @@ import BrowseJobs from "./pages/candidate/BrowseJobs";
 import CandidateJobDetails from "./pages/candidate/CandidateJobDetails";
 import MyApplications from "./pages/candidate/MyApplications";
 import CandidateProfile from "./pages/candidate/CandidateProfile";
+import SavedJobs from "./pages/candidate/SavedJobs";
 
 // HR Pages
 import HRDashboard from "./pages/hr/HRDashboard";
@@ -83,6 +84,8 @@ function App() {
         <Route path="applications" element={<MyApplications />} />
 
         <Route path="profile" element={<CandidateProfile />} />
+
+        <Route path="saved-jobs" element={<SavedJobs />} />
       </Route>
 
       {/* ================= HR ================= */}
