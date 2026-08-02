@@ -15,66 +15,64 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
+	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
 
-        this.jwtAuthenticationFilter =
-                jwtAuthenticationFilter;
-    }
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+	}
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf ->
-                        csrf.disable())
+		http.csrf(csrf -> csrf.disable())
 
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers(
-                                        "/api/auth/register",
-                                        "/api/auth/login")
-                                .permitAll()
+				.authorizeHttpRequests(auth -> auth
 
-                                .requestMatchers(
-                                        "/api/v1/public/vacancies",
-                                        "/api/v1/public/vacancies/**")
-                                .permitAll()
+					    .requestMatchers(
+					        "/api/auth/register",
+					        "/api/auth/login"
+					    )
+					    .permitAll()
 
-                                .requestMatchers(
-                                        "/api/offers/**")
-                                .permitAll()
+					    .requestMatchers(
+					        "/api/v1/public/vacancies",
+					        "/api/v1/public/vacancies/**"
+					    )
+					    .permitAll()
 
-                                .requestMatchers(
-                                        "/api/admin/**")
-                                .hasRole("ADMIN")
+					    .requestMatchers(
+					        "/api/admin/**"
+					    )
+					    .hasRole("ADMIN")
 
-                                .requestMatchers(
-                                        "/api/hr/**")
-                                .hasAnyRole(
-                                        "HR",
-                                        "ADMIN")
+					    .requestMatchers(
+					        "/api/v1/hr/**",
+					        "/api/hr/**",
+					        "/api/vacancies/**",
+					        "/api/interviews/**"
+					    )
+					    .hasAnyRole("HR","ADMIN")
 
-                                .requestMatchers(
-                                        "/api/candidate/**")
-                                .hasAnyRole(
-                                        "CANDIDATE",
-                                        "ADMIN")
+					    .requestMatchers(
+					        "/api/v1/candidate/**",
+					        "/api/candidate/**"
+					    )
+					    .hasAnyRole("CANDIDATE","ADMIN")
 
-                                .anyRequest()
-                                .authenticated())
+					    .requestMatchers(
+					        "/api/users/**"
+					    )
+					    .authenticated()
 
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+					    .anyRequest()
+					    .authenticated()
+					)
 
-        return http.build();
-    }
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
 }
