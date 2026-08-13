@@ -1,10 +1,15 @@
 package com.talentbridge.service.impl;
 
+import com.talentbridge.client.OfferAiPdfClient;
+import com.talentbridge.dto.ai.request.GenerateAiPdfRequest;
+import com.talentbridge.dto.ai.response.GenerateAiPdfResponse;
+import com.talentbridge.dto.ai.response.GeneratePdfResponse;
 import com.talentbridge.dto.request.CreateOfferRequest;
 import com.talentbridge.dto.request.UpdateOfferRequest;
 import com.talentbridge.dto.response.OfferResponse;
 import com.talentbridge.entity.Application;
 import com.talentbridge.entity.Offer;
+import com.talentbridge.entity.User;
 import com.talentbridge.entity.Vacancy;
 import com.talentbridge.enums.ApplicationStatus;
 import com.talentbridge.enums.OfferStatus;
@@ -16,6 +21,7 @@ import com.talentbridge.exception.OfferNotFoundException;
 import com.talentbridge.repository.ApplicationRepository;
 import com.talentbridge.repository.OfferRepository;
 import com.talentbridge.service.OfferService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,176 +36,144 @@ import java.util.stream.Collectors;
 public class OfferServiceImpl implements OfferService {
 
     private final OfferRepository offerRepository;
-
     private final ApplicationRepository applicationRepository;
+    private final OfferAiPdfClient offerAiPdfClient;
+    private final String companyName;
+    private final String companyAddress;
 
     public OfferServiceImpl(
-        OfferRepository offerRepository,
-        ApplicationRepository applicationRepository
+            OfferRepository offerRepository,
+            ApplicationRepository applicationRepository,
+            OfferAiPdfClient offerAiPdfClient,
+            @Value("${talentbridge.company.name:TalentBridge}") String companyName,
+            @Value("${talentbridge.company.address:}") String companyAddress
     ) {
         this.offerRepository = offerRepository;
         this.applicationRepository = applicationRepository;
+        this.offerAiPdfClient = offerAiPdfClient;
+        this.companyName = companyName;
+        this.companyAddress = companyAddress;
     }
 
     @Override
-    public OfferResponse createDraft(
-        CreateOfferRequest request
-    ) {
-        Application application =
-            applicationRepository
+    public OfferResponse createDraft(CreateOfferRequest request) {
+
+        Application application = applicationRepository
                 .findById(request.getApplicationId())
                 .orElseThrow(
-                    () -> new ApplicationNotFoundException(
-                        "Application not found with ID: "
-                            + request.getApplicationId()
-                    )
+                        () -> new ApplicationNotFoundException(
+                                "Application not found with ID: "
+                                        + request.getApplicationId()
+                        )
                 );
 
-        if (
-            application.getStatus()
-                != ApplicationStatus.SELECTED
-        ) {
+        if (application.getStatus() != ApplicationStatus.SELECTED) {
             throw new ApplicationNotSelectedException(
-                "Only selected applications can receive an offer"
+                    "Only selected applications can receive an offer"
             );
         }
 
-        if (
-            offerRepository.existsByApplicationId(
-                application.getId()
-            )
-        ) {
+        if (offerRepository.existsByApplicationId(application.getId())) {
             throw new DuplicateOfferException(
-                "An offer already exists for application ID: "
-                    + application.getId()
+                    "An offer already exists for application ID: "
+                            + application.getId()
             );
         }
 
         validateOffer(
-            request.getOfferedCtc(),
-            request.getJoiningDate(),
-            request.getExpiryDate()
+                request.getOfferedCtc(),
+                request.getJoiningDate(),
+                request.getExpiryDate()
         );
 
         Vacancy vacancy = application.getVacancy();
 
-        if (
-            vacancy.getTitle() == null
-                || vacancy.getTitle().isBlank()
-        ) {
+        if (vacancy.getTitle() == null || vacancy.getTitle().isBlank()) {
             throw new InvalidOfferException(
-                "Vacancy position title is missing"
+                    "Vacancy position title is missing"
             );
         }
 
         Offer offer = Offer.builder()
-            .application(application)
-            .candidate(application.getCandidate())
-            .vacancy(vacancy)
-            .createdByHr(vacancy.getHr())
-            .position(vacancy.getTitle().trim())
-            .department(request.getDepartment().trim())
-            .offeredCtc(request.getOfferedCtc())
-            .joiningDate(request.getJoiningDate())
-            .expiryDate(request.getExpiryDate())
-            .employmentType(
-                request.getEmploymentType().trim()
-            )
-            .workLocation(
-                request.getWorkLocation().trim()
-            )
-            .workMode(request.getWorkMode().trim())
-            .benefits(
-                normalizeList(request.getBenefits())
-            )
-            .additionalTerms(
-                normalizeList(
-                    request.getAdditionalTerms()
+                .application(application)
+                .candidate(application.getCandidate())
+                .vacancy(vacancy)
+                .createdByHr(vacancy.getHr())
+                .position(vacancy.getTitle().trim())
+                .department(request.getDepartment().trim())
+                .offeredCtc(request.getOfferedCtc())
+                .joiningDate(request.getJoiningDate())
+                .expiryDate(request.getExpiryDate())
+                .employmentType(request.getEmploymentType().trim())
+                .workLocation(request.getWorkLocation().trim())
+                .workMode(request.getWorkMode().trim())
+                .benefits(normalizeList(request.getBenefits()))
+                .additionalTerms(
+                        normalizeList(request.getAdditionalTerms())
                 )
-            )
-            .offerStatus(OfferStatus.DRAFT)
-            .build();
+                .offerStatus(OfferStatus.DRAFT)
+                .build();
 
         return mapToResponse(
-            offerRepository.save(offer)
+                offerRepository.save(offer)
         );
     }
 
     @Override
     public OfferResponse updateDraft(
-        Long offerId,
-        UpdateOfferRequest request
+            Long offerId,
+            UpdateOfferRequest request
     ) {
+
         Offer offer = findOffer(offerId);
 
         if (offer.getOfferStatus() != OfferStatus.DRAFT) {
             throw new InvalidOfferException(
-                "Only draft offers can be updated"
+                    "Only draft offers can be updated"
             );
         }
 
         validateOffer(
-            request.getOfferedCtc(),
-            request.getJoiningDate(),
-            request.getExpiryDate()
+                request.getOfferedCtc(),
+                request.getJoiningDate(),
+                request.getExpiryDate()
         );
 
-        offer.setDepartment(
-            request.getDepartment().trim()
-        );
-        offer.setOfferedCtc(
-            request.getOfferedCtc()
-        );
-        offer.setJoiningDate(
-            request.getJoiningDate()
-        );
-        offer.setExpiryDate(
-            request.getExpiryDate()
-        );
-        offer.setEmploymentType(
-            request.getEmploymentType().trim()
-        );
-        offer.setWorkLocation(
-            request.getWorkLocation().trim()
-        );
-        offer.setWorkMode(
-            request.getWorkMode().trim()
-        );
-        offer.setBenefits(
-            normalizeList(request.getBenefits())
-        );
+        offer.setDepartment(request.getDepartment().trim());
+        offer.setOfferedCtc(request.getOfferedCtc());
+        offer.setJoiningDate(request.getJoiningDate());
+        offer.setExpiryDate(request.getExpiryDate());
+        offer.setEmploymentType(request.getEmploymentType().trim());
+        offer.setWorkLocation(request.getWorkLocation().trim());
+        offer.setWorkMode(request.getWorkMode().trim());
+        offer.setBenefits(normalizeList(request.getBenefits()));
         offer.setAdditionalTerms(
-            normalizeList(
-                request.getAdditionalTerms()
-            )
+                normalizeList(request.getAdditionalTerms())
         );
 
         return mapToResponse(
-            offerRepository.save(offer)
+                offerRepository.save(offer)
         );
     }
 
     @Override
     @Transactional(readOnly = true)
-    public OfferResponse getOfferById(
-        Long offerId
-    ) {
+    public OfferResponse getOfferById(Long offerId) {
         return mapToResponse(findOffer(offerId));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public OfferResponse getOfferByApplicationId(
-        Long applicationId
-    ) {
+    public OfferResponse getOfferByApplicationId(Long applicationId) {
+
         Offer offer = offerRepository
-            .findByApplicationId(applicationId)
-            .orElseThrow(
-                () -> new OfferNotFoundException(
-                    "Offer not found for application ID: "
-                        + applicationId
-                )
-            );
+                .findByApplicationId(applicationId)
+                .orElseThrow(
+                        () -> new OfferNotFoundException(
+                                "Offer not found for application ID: "
+                                        + applicationId
+                        )
+                );
 
         return mapToResponse(offer);
     }
@@ -207,133 +181,250 @@ public class OfferServiceImpl implements OfferService {
     @Override
     @Transactional(readOnly = true)
     public List<OfferResponse> getAllOffers() {
+
         return offerRepository
-            .findAllByOrderByCreatedAtDesc()
-            .stream()
-            .map(this::mapToResponse)
-            .toList();
+                .findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GeneratePdfResponse generatePdf(Long offerId) {
+
+        Offer offer = findOffer(offerId);
+
+        validatePdfData(offer);
+
+        User candidate = offer.getCandidate();
+        User hr = resolveHr(offer);
+
+        GenerateAiPdfRequest request =
+                new GenerateAiPdfRequest(
+                        String.valueOf(offer.getId()),
+                        candidate.getFullName().trim(),
+                        offer.getPosition().trim(),
+                        offer.getDepartment().trim(),
+                        offer.getOfferedCtc().toPlainString(),
+                        offer.getJoiningDate().toString(),
+                        offer.getWorkLocation().trim(),
+                        companyName.trim(),
+                        companyAddress.trim(),
+                        hr.getFullName().trim(),
+                        safeList(offer.getBenefits()),
+                        safeList(offer.getAdditionalTerms())
+                );
+
+        GenerateAiPdfResponse aiResponse =
+                offerAiPdfClient.generatePdf(request);
+
+        return new GeneratePdfResponse(
+                aiResponse.status(),
+                "Offer PDF generated successfully."
+        );
     }
 
     private Offer findOffer(Long offerId) {
+
         return offerRepository
-            .findById(offerId)
-            .orElseThrow(
-                () -> new OfferNotFoundException(
-                    "Offer not found with ID: "
-                        + offerId
-                )
-            );
+                .findById(offerId)
+                .orElseThrow(
+                        () -> new OfferNotFoundException(
+                                "Offer not found with ID: "
+                                        + offerId
+                        )
+                );
     }
 
-    private void validateOffer(
-        BigDecimal offeredCtc,
-        LocalDate joiningDate,
-        LocalDate expiryDate
-    ) {
+    private User resolveHr(Offer offer) {
+
+        User hr = offer.getCreatedByHr();
+
+        if (hr == null && offer.getVacancy() != null) {
+            hr = offer.getVacancy().getHr();
+        }
+
         if (
-            offeredCtc == null
-                || offeredCtc.compareTo(
-                    BigDecimal.ZERO
-                ) <= 0
+                hr == null
+                        || hr.getFullName() == null
+                        || hr.getFullName().isBlank()
         ) {
             throw new InvalidOfferException(
-                "Offered CTC must be greater than zero"
+                    "HR information is missing for this offer"
+            );
+        }
+
+        return hr;
+    }
+
+    private void validatePdfData(Offer offer) {
+
+        if (
+                offer.getCandidate() == null
+                        || offer.getCandidate().getFullName() == null
+                        || offer.getCandidate().getFullName().isBlank()
+        ) {
+            throw new InvalidOfferException(
+                    "Candidate name is missing"
             );
         }
 
         if (
-            joiningDate == null
-                || expiryDate == null
+                offer.getPosition() == null
+                        || offer.getPosition().isBlank()
         ) {
             throw new InvalidOfferException(
-                "Joining date and expiry date are required"
+                    "Offer position is missing"
+            );
+        }
+
+        if (
+                offer.getDepartment() == null
+                        || offer.getDepartment().isBlank()
+        ) {
+            throw new InvalidOfferException(
+                    "Offer department is missing"
+            );
+        }
+
+        if (
+                offer.getOfferedCtc() == null
+                        || offer.getOfferedCtc()
+                        .compareTo(BigDecimal.ZERO) <= 0
+        ) {
+            throw new InvalidOfferException(
+                    "Offered CTC is missing or invalid"
+            );
+        }
+
+        if (offer.getJoiningDate() == null) {
+            throw new InvalidOfferException(
+                    "Joining date is missing"
+            );
+        }
+
+        if (
+                offer.getWorkLocation() == null
+                        || offer.getWorkLocation().isBlank()
+        ) {
+            throw new InvalidOfferException(
+                    "Work location is missing"
+            );
+        }
+
+        if (
+                companyName == null
+                        || companyName.isBlank()
+        ) {
+            throw new InvalidOfferException(
+                    "Company name is not configured"
+            );
+        }
+
+        if (
+                companyAddress == null
+                        || companyAddress.isBlank()
+        ) {
+            throw new InvalidOfferException(
+                    "Company address is not configured"
+            );
+        }
+    }
+
+    private void validateOffer(
+            BigDecimal offeredCtc,
+            LocalDate joiningDate,
+            LocalDate expiryDate
+    ) {
+
+        if (
+                offeredCtc == null
+                        || offeredCtc.compareTo(BigDecimal.ZERO) <= 0
+        ) {
+            throw new InvalidOfferException(
+                    "Offered CTC must be greater than zero"
+            );
+        }
+
+        if (
+                joiningDate == null
+                        || expiryDate == null
+        ) {
+            throw new InvalidOfferException(
+                    "Joining date and expiry date are required"
             );
         }
 
         if (joiningDate.isBefore(LocalDate.now())) {
             throw new InvalidOfferException(
-                "Joining date cannot be in the past"
+                    "Joining date cannot be in the past"
             );
         }
 
         if (expiryDate.isBefore(LocalDate.now())) {
             throw new InvalidOfferException(
-                "Expiry date cannot be in the past"
+                    "Expiry date cannot be in the past"
             );
         }
 
         if (!expiryDate.isBefore(joiningDate)) {
             throw new InvalidOfferException(
-                "Expiry date must be before joining date"
+                    "Expiry date must be before joining date"
             );
         }
     }
 
-    private List<String> normalizeList(
-        List<String> values
-    ) {
+    private List<String> normalizeList(List<String> values) {
+
         if (values == null) {
             return new ArrayList<>();
         }
 
         return values.stream()
-            .map(String::trim)
-            .filter(value -> !value.isBlank())
-            .distinct()
-            .collect(
-                Collectors.toCollection(
-                    ArrayList::new
-                )
-            );
+                .map(String::trim)
+                .filter(value -> !value.isBlank())
+                .distinct()
+                .collect(
+                        Collectors.toCollection(ArrayList::new)
+                );
     }
 
-    private OfferResponse mapToResponse(
-        Offer offer
-    ) {
+    private List<String> safeList(List<String> values) {
+
+        if (values == null) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(values);
+    }
+
+    private OfferResponse mapToResponse(Offer offer) {
+
         return OfferResponse.builder()
-            .id(offer.getId())
-            .applicationId(
-                offer.getApplication().getId()
-            )
-            .candidateId(
-                offer.getCandidate().getId()
-            )
-            .candidateName(
-                offer.getCandidate().getFullName()
-            )
-            .vacancyId(
-                offer.getVacancy().getId()
-            )
-            .position(offer.getPosition())
-            .department(offer.getDepartment())
-            .offeredCtc(offer.getOfferedCtc())
-            .joiningDate(offer.getJoiningDate())
-            .expiryDate(offer.getExpiryDate())
-            .employmentType(
-                offer.getEmploymentType()
-            )
-            .workLocation(
-                offer.getWorkLocation()
-            )
-            .workMode(offer.getWorkMode())
-            .benefits(
-                new ArrayList<>(
-                    offer.getBenefits()
+                .id(offer.getId())
+                .applicationId(offer.getApplication().getId())
+                .candidateId(offer.getCandidate().getId())
+                .candidateName(offer.getCandidate().getFullName())
+                .vacancyId(offer.getVacancy().getId())
+                .position(offer.getPosition())
+                .department(offer.getDepartment())
+                .offeredCtc(offer.getOfferedCtc())
+                .joiningDate(offer.getJoiningDate())
+                .expiryDate(offer.getExpiryDate())
+                .employmentType(offer.getEmploymentType())
+                .workLocation(offer.getWorkLocation())
+                .workMode(offer.getWorkMode())
+                .benefits(
+                        new ArrayList<>(offer.getBenefits())
                 )
-            )
-            .additionalTerms(
-                new ArrayList<>(
-                    offer.getAdditionalTerms()
+                .additionalTerms(
+                        new ArrayList<>(offer.getAdditionalTerms())
                 )
-            )
-            .offerStatus(
-                offer.getOfferStatus()
-            )
-            .createdAt(offer.getCreatedAt())
-            .sentAt(offer.getSentAt())
-            .respondedAt(
-                offer.getRespondedAt()
-            )
-            .build();
+                .offerStatus(offer.getOfferStatus())
+                .createdAt(offer.getCreatedAt())
+                .sentAt(offer.getSentAt())
+                .respondedAt(offer.getRespondedAt())
+                .build();
     }
 }

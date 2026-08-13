@@ -1,24 +1,5 @@
-# Python virtual environment
 .venv/
-venv/
-
-# Python generated files
 __pycache__/
-*.py[cod]
-
-# Environment variables and secrets
+*.pyc
 .env
-
-# Test and tool caches
-.pytest_cache/
-.mypy_cache/
-.coverage
-htmlcov/
-
-# IDE files
-.vscode/
-.idea/
-
-# Operating-system files
-.DS_Store
-Thumbs.db
+offer-pdfs/
